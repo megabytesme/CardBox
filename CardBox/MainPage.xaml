@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CardBox"
              x:Class="CardBox.MainPage">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -8,14 +9,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackLayout Orientation="Vertical" Grid.Column="0" BackgroundColor="#80000000">
-            <Button x:Name="BackButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnBackClicked" />
-            <Button x:Name="HomeButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnHomeClicked" />
-            <Button x:Name="AddButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnAddClicked" />
-            <StackLayout VerticalOptions="EndAndExpand">
-                <Button x:Name="SettingsButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnSettingsClicked" />
-            </StackLayout>
-        </StackLayout>
+        <local:NavbarControl Grid.Column="0" />
 
         <ScrollView Grid.Column="1">
             <CollectionView ItemsSource="{Binding Cards}">
