@@ -66,4 +66,28 @@
 	  <Folder Include="Resources\Styles\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="NavBarControl.xaml.cs">
+	    <DependentUpon>NavBarControl.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="SettingsPage.xaml.cs">
+	    <DependentUpon>SettingsPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="AddCardPage.xaml.cs">
+	    <DependentUpon>AddCardPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="NavBarControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="SettingsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="AddCardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
