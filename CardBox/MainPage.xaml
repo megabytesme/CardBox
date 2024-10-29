@@ -9,43 +9,11 @@
         </Grid.ColumnDefinitions>
 
         <StackLayout Orientation="Vertical" Grid.Column="0" BackgroundColor="#80000000">
-            <Button Style="{StaticResource PlatformButtonStyle}" Clicked="OnBackClicked">
-                <Button.Text>
-                    <OnPlatform x:TypeArguments="x:String">
-                        <On Platform="Android" Value="&#xE5C4;" />
-                        <On Platform="iOS" Value="&#xF3A5;" />
-                        <On Platform="Windows" Value="&#xE72B;" />
-                    </OnPlatform>
-                </Button.Text>
-            </Button>
-            <Button Style="{StaticResource PlatformButtonStyle}" Clicked="OnHomeClicked">
-                <Button.Text>
-                    <OnPlatform x:TypeArguments="x:String">
-                        <On Platform="Android" Value="&#xE88A;" />
-                        <On Platform="iOS" Value="&#xF6A8;" />
-                        <On Platform="Windows" Value="&#xE80F;" />
-                    </OnPlatform>
-                </Button.Text>
-            </Button>
-            <Button Style="{StaticResource PlatformButtonStyle}" Clicked="OnAddClicked">
-                <Button.Text>
-                    <OnPlatform x:TypeArguments="x:String">
-                        <On Platform="Android" Value="&#xE145;" />
-                        <On Platform="iOS" Value="&#xF59B;" />
-                        <On Platform="Windows" Value="&#xE710;" />
-                    </OnPlatform>
-                </Button.Text>
-            </Button>
+            <Button x:Name="BackButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnBackClicked" />
+            <Button x:Name="HomeButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnHomeClicked" />
+            <Button x:Name="AddButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnAddClicked" />
             <StackLayout VerticalOptions="EndAndExpand">
-                <Button Style="{StaticResource PlatformButtonStyle}" Clicked="OnSettingsClicked">
-                    <Button.Text>
-                        <OnPlatform x:TypeArguments="x:String">
-                            <On Platform="Android" Value="&#xE8B8;" />
-                            <On Platform="iOS" Value="&#xF751;" />
-                            <On Platform="Windows" Value="&#xE713;" />
-                        </OnPlatform>
-                    </Button.Text>
-                </Button>
+                <Button x:Name="SettingsButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnSettingsClicked" />
             </StackLayout>
         </StackLayout>
 

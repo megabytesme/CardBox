@@ -4,37 +4,9 @@
              x:Class="CardBox.App">
     <Application.Resources>
         <Style x:Key="PlatformButtonStyle" TargetType="Button">
-            <Setter Property="FontFamily">
-                <OnPlatform x:TypeArguments="x:String">
-                    <On Platform="Android" Value="MaterialIcons" />
-                    <On Platform="iOS" Value="AppleIcons" />
-                    <On Platform="Windows" Value="Segoe MDL2 Assets" />
-                </OnPlatform>
-            </Setter>
-            <Setter Property="FontSize" Value="24" />
             <Setter Property="HeightRequest" Value="50" />
             <Setter Property="WidthRequest" Value="50" />
             <Setter Property="TextColor" Value="{AppThemeBinding Light=Black, Dark=White}" />
         </Style>
-        <OnPlatform x:TypeArguments="x:String" x:Key="BackGlyph">
-            <On Platform="Android" Value="&#xE5C4;" />
-            <On Platform="iOS" Value="&#xF3A5;" />
-            <On Platform="Windows" Value="&#xE72B;" />
-        </OnPlatform>
-        <OnPlatform x:TypeArguments="x:String" x:Key="HomeGlyph">
-            <On Platform="Android" Value="&#xE88A;" />
-            <On Platform="iOS" Value="&#xF6A8;" />
-            <On Platform="Windows" Value="&#xE80F;" />
-        </OnPlatform>
-        <OnPlatform x:TypeArguments="x:String" x:Key="AddGlyph">
-            <On Platform="Android" Value="&#xE145;" />
-            <On Platform="iOS" Value="&#xF59B;" />
-            <On Platform="Windows" Value="&#xE710;" />
-        </OnPlatform>
-        <OnPlatform x:TypeArguments="x:String" x:Key="SettingsGlyph">
-            <On Platform="Android" Value="&#xE8B8;" />
-            <On Platform="iOS" Value="&#xF751;" />
-            <On Platform="Windows" Value="&#xE713;" />
-        </OnPlatform>
     </Application.Resources>
 </Application>
