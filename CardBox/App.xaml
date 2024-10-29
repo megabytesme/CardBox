@@ -6,9 +6,9 @@
         <Style x:Key="PlatformButtonStyle" TargetType="Button">
             <Setter Property="FontFamily">
                 <OnPlatform x:TypeArguments="x:String">
-                    <On Platform="Android" Value="MaterialIcons" />
-                    <On Platform="iOS" Value="MaterialIcons" />
-                    <On Platform="Windows" Value="SegoeMDL2Assets" />
+                    <On Platform="Android" Value="sans-serif" />
+                    <On Platform="iOS" Value="Helvetica" />
+                    <On Platform="Windows" Value="Segoe MDL2 Assets" />
                 </OnPlatform>
             </Setter>
         </Style>
