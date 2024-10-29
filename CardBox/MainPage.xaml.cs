@@ -36,6 +36,7 @@ namespace CardBox
 
     public class Card
     {
-        public string CardTitle { get; set; }
+        public string CardTitle { get; set; } = string.Empty;
     }
+
 }
