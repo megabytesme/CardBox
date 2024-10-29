@@ -8,7 +8,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackLayout Orientation="Vertical" Grid.Column="0" BackgroundColor="LightGray">
+        <StackLayout Orientation="Vertical" Grid.Column="0" BackgroundColor="#80000000">
             <Button Style="{StaticResource PlatformButtonStyle}" Clicked="OnBackClicked">
                 <Button.Text>
                     <OnPlatform x:TypeArguments="x:String">
