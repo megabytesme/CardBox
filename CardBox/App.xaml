@@ -1,14 +1,16 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:CardBox"
              x:Class="CardBox.App">
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <Style x:Key="PlatformButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily">
+                <OnPlatform x:TypeArguments="x:String">
+                    <On Platform="Android" Value="MaterialIcons" />
+                    <On Platform="iOS" Value="MaterialIcons" />
+                    <On Platform="Windows" Value="SegoeMDL2Assets" />
+                </OnPlatform>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
