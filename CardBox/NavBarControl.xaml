@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CardBox.NavbarControl">
     <StackLayout Orientation="Vertical" BackgroundColor="#05FFFFFF" Margin="5" Spacing="5">
-        <Button x:Name="BackButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnBackClicked" />
         <Button x:Name="HomeButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnHomeClicked" />
         <Button x:Name="AddButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnAddClicked" />
         <StackLayout VerticalOptions="EndAndExpand">
