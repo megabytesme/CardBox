@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardBox", "CardBox\CardBox.csproj", "{4A2C245E-1DC7-4F1F-8C20-78F676098A8F}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared Code", "Shared Code\Shared Code.shproj", "{BBE7CFF8-F5C8-4A9E-8861-4158BF545B53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,5 +25,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3C87B34C-513E-4763-ACDF-BA5E39EBEA54}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared Code\Shared Code.projitems*{4a2c245e-1dc7-4f1f-8c20-78f676098a8f}*SharedItemsImports = 5
+		Shared Code\Shared Code.projitems*{bbe7cff8-f5c8-4a9e-8861-4158bf545b53}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

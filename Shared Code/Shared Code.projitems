@@ -10,6 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Card.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CardManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CardRepository.cs" />
   </ItemGroup>
 </Project>
