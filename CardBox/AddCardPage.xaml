@@ -16,12 +16,20 @@
             <Frame Margin="10" Background="#05FFFFFF" >
                 <StackLayout >
                     <Label Text="Name of Card:" />
-                    <Entry Placeholder="Enter name of card (required)" Margin="0,5,0,15"/>
+                    <Entry x:Name="cardNameEntry" Placeholder="Enter name of card (required)" Margin="0,5,0,15"/>
                     <Label Text="Knickname of Card:" />
-                    <Entry Placeholder="Enter knickname of card (optional)" Margin="0,5,0,15"/>
+                    <Entry x:Name="cardKnicknameEntry" Placeholder="Enter knickname of card (optional)" Margin="0,5,0,15"/>
                     <Label Text="Card Number:" />
-                    <Entry Placeholder="Enter card number (required)" Margin="0,5,0,15"/>
-                    <Button Text="Add Card" Command="{Binding AddCardCommand}" />
+                    <Entry x:Name="cardNumberEntry" Placeholder="Enter card number (required)" Margin="0,5,0,15"/>
+                    <Picker x:Name="picker" Title="Card Display Type:" Margin="0,5,0,15">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>QR</x:String>
+                                <x:String>BarCode</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                    <Button Text="Add Card" Command="{Binding AddCard}" />
                 </StackLayout>
             </Frame>
         </ScrollView>
