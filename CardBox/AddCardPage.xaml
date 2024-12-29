@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CardBox.AddCardPage"             
-             xmlns:local="clr-namespace:CardBox">
+             xmlns:local="clr-namespace:CardBox"
+             x:Class="CardBox.AddCardPage">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -11,5 +11,19 @@
         </Grid.ColumnDefinitions>
 
         <local:NavbarControl Grid.Column="0" />
+
+        <ScrollView Grid.Column="1">
+            <Frame Margin="10" Background="#05FFFFFF" >
+                <StackLayout >
+                    <Label Text="Name of Card:" />
+                    <Entry Placeholder="Enter name of card (required)" Margin="0,5,0,15"/>
+                    <Label Text="Knickname of Card:" />
+                    <Entry Placeholder="Enter knickname of card (optional)" Margin="0,5,0,15"/>
+                    <Label Text="Card Number:" />
+                    <Entry Placeholder="Enter card number (required)" Margin="0,5,0,15"/>
+                    <Button Text="Add Card" Command="{Binding AddCardCommand}" />
+                </StackLayout>
+            </Frame>
+        </ScrollView>
     </Grid>
 </ContentPage>
