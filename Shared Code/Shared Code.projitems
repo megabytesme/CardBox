@@ -11,5 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Card.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CardRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DatabaseService.cs" />
   </ItemGroup>
 </Project>
