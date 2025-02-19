@@ -15,7 +15,7 @@ namespace CardBox
         private async void OnAddCard()
         {
             string cardName = ((Entry)FindByName("cardNameEntry")).Text;
-            string cardKnickname = ((Entry)FindByName("cardKnicknameEntry")).Text;
+            string cardNickname = ((Entry)FindByName("cardNicknameEntry")).Text;
             string cardNumberText = ((Entry)FindByName("cardNumberEntry")).Text;
             Picker displayPicker = (Picker)FindByName("picker");
 
@@ -40,7 +40,7 @@ namespace CardBox
             var newCard = new Card
             {
                 CardName = cardName,
-                CardKnickname = cardKnickname,
+                CardNickname = cardNickname,
                 CardNumber = cardNumber,
                 DisplayType = selectedDisplayType
             };

@@ -18,7 +18,7 @@
                     <Label Text="Name of Card:" />
                     <Entry x:Name="cardNameEntry" Placeholder="Enter name of card (required)" Margin="0,5,0,15"/>
                     <Label Text="Knickname of Card:" />
-                    <Entry x:Name="cardKnicknameEntry" Placeholder="Enter knickname of card (optional)" Margin="0,5,0,15"/>
+                    <Entry x:Name="cardNicknameEntry" Placeholder="Enter nickname of card (optional)" Margin="0,5,0,15"/>
                     <Label Text="Card Number:" />
                     <Entry x:Name="cardNumberEntry" Placeholder="Enter card number (required)" Margin="0,5,0,15"/>
                     <Picker x:Name="picker" Title="Card Display Type:" Margin="0,5,0,15">
