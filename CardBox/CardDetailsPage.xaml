@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:CardBox"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             x:Class="CardBox.CardDetailPage">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <local:NavbarControl Grid.Column="0" />
+
+        <ScrollView Grid.Column="1">
+            <StackLayout Padding="10">
+                <Label Text="{Binding CardName}" FontSize="24" Margin="0,0,0,20"/>
+                <Label Text="{Binding CardNickname}" Margin="0,0,0,10"/>
+                <zxing:BarcodeGeneratorView
+                                            x:Name="barcodeImage"
+                                            Value="{Binding CardNumber}" 
+                                            Format="{Binding BarcodeFormat}"
+                                            HeightRequest="200" 
+                                            WidthRequest="200"/>
+                <Label Text="{Binding CardNumber}" Margin="0,0,0,10"/>
+                <Label Text="Display Type:" Margin="0,0,0,10"/>
+                <Label Text="{Binding DisplayType}" Margin="0,0,0,10"/>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -13,19 +13,12 @@ namespace CardBox
             BindingContext = this;
         }
 
-        private void OnBackClicked(object sender, EventArgs e)
+        private Command<Card> _viewCardCommand;
+        public Command<Card> ViewCardCommand => _viewCardCommand ?? (_viewCardCommand = new Command<Card>(OnViewCard));
+
+        private async void OnViewCard(Card selectedCard)
         {
-
-        }
-
-        private void OnHomeClicked(object sender, EventArgs e)
-        {
-
-        }
-
-        private void OnSettingsClicked(object sender, EventArgs e)
-        {
-
+            await Navigation.PushAsync(new CardDetailPage(selectedCard));
         }
     }
 }
