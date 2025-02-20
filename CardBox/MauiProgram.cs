@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MaterialColorUtilities.Maui;
+using Microsoft.Extensions.Logging;
 using ZXing.Net.Maui.Controls;
 
 namespace CardBox
@@ -11,6 +12,7 @@ namespace CardBox
             builder
                 .UseMauiApp<App>()
                 .UseBarcodeReader()
+                .UseMaterialColors()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
