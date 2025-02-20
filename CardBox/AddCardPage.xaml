@@ -24,8 +24,8 @@
                     <Picker x:Name="picker" Title="Card Display Type:" Margin="0,5,0,15">
                         <Picker.ItemsSource>
                             <x:Array Type="{x:Type x:String}">
-                                <x:String>QR</x:String>
-                                <x:String>BarCode</x:String>
+                                <x:String>QrCode</x:String>
+                                <x:String>Bar128</x:String>
                             </x:Array>
                         </Picker.ItemsSource>
                     </Picker>
