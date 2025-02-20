@@ -14,7 +14,7 @@ namespace Shared_Code
 
     public enum DisplayType
     {
-        BarCode,
-        QR,
+        Bar128,
+        QrCode,
     }
 }
