@@ -1,5 +1,5 @@
 # CardBox
-ADD IMAGE
+![Screenshot 2025-02-21 035805](https://github.com/user-attachments/assets/155f6660-3396-4705-b0e3-af225b7dba41)
 
 
 CardBox is an app which is designed to effortlessly present your loyalty cards on all your devices.
