@@ -1,0 +1,30 @@
+﻿<Page
+    x:Class="_1709_UWP.CardDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:_1709_UWP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <local:NavbarControl Background="Black" HorizontalAlignment="Center" Width="57"/>
+
+        <ScrollViewer Grid.Column="1">
+            <StackPanel Padding="10">
+                <TextBlock Text="{Binding CardName}" FontSize="24" Margin="0,0,0,20"/>
+                <TextBlock Text="{Binding CardNickname}" Margin="0,0,0,10"/>
+                <Image x:Name="barcodeImage" Height="200" Width="200" Margin="0,0,0,10"/>
+                <TextBlock Text="{Binding CardNumber}" Margin="0,0,0,10"/>
+                <TextBlock Text="Display Type:" Margin="0,0,0,10"/>
+                <TextBlock Text="{Binding DisplayType}" Margin="0,0,0,10"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

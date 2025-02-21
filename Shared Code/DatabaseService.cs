@@ -18,7 +18,12 @@ namespace Shared_Code
 
         private static string GetDatabasePath()
         {
+
+#if WINDOWS_UWP
+            return Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "cards.db");
+#else
             return Path.Combine(FileSystem.AppDataDirectory, "cards.db");
+#endif
         }
     }
 }
