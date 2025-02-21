@@ -13,19 +13,28 @@ namespace _1709_UWP
         private void OnHomeClicked(object sender, RoutedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(MainPage));
+            if (rootFrame != null && rootFrame.Content is MainPage mainPage)
+            {
+                mainPage.MainContentFrame.Navigate(typeof(HomePage));
+            }
         }
 
         private void OnAddClicked(object sender, RoutedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(AddCardPage));
+            if (rootFrame != null && rootFrame.Content is MainPage mainPage)
+            {
+                mainPage.MainContentFrame.Navigate(typeof(AddCardPage));
+            }
         }
 
         private void OnSettingsClicked(object sender, RoutedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
-            // rootFrame.Navigate(typeof(SettingsPage));
+            if (rootFrame != null && rootFrame.Content is MainPage mainPage)
+            {
+                //mainPage.MainContentFrame.Navigate(typeof(SettingsPage));
+            }
         }
     }
 }

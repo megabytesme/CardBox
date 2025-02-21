@@ -9,13 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <local:NavbarControl Background="Black" HorizontalAlignment="Center" Width="57"/>
-
         <ScrollViewer Grid.Column="1">
             <StackPanel Padding="10">
                 <TextBlock Text="{Binding CardName}" FontSize="24" Margin="0,0,0,20"/>
