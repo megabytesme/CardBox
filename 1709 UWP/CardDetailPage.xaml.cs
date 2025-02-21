@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
@@ -6,7 +7,7 @@ using Shared_Code;
 using ZXing;
 using ZXing.Common;
 using ZXing.Rendering;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System;
 
 namespace _1709_UWP
 {
@@ -52,6 +53,33 @@ namespace _1709_UWP
             }
 
             return bitmap;
+        }
+
+        private void EditCard_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is Card selectedCard)
+            {
+                Frame.Navigate(typeof(EditCardPage), selectedCard);
+            }
+        }
+
+        private async void DeleteCard_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog deleteDialog = new ContentDialog
+            {
+                Title = "Delete Card",
+                Content = "Are you sure you want to delete this card?",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel"
+            };
+
+            ContentDialogResult result = await deleteDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && DataContext is Card selectedCard)
+            {
+                CardRepository.Instance.DeleteCard(selectedCard);
+                Frame.GoBack();
+            }
         }
     }
 }

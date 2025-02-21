@@ -31,18 +31,6 @@ namespace _1709_UWP
                 return;
             }
 
-            if (!int.TryParse(cardNumberText, out int cardNumber))
-            {
-                var dialog = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = "Card number must be a valid integer.",
-                    CloseButtonText = "OK"
-                };
-                await dialog.ShowAsync();
-                return;
-            }
-
             if (!Enum.TryParse(selectedDisplayTypeItem.Content.ToString(), out DisplayType selectedDisplayType))
             {
                 var dialog = new ContentDialog
@@ -59,13 +47,13 @@ namespace _1709_UWP
             {
                 CardName = cardName,
                 CardNickname = cardNickname,
-                CardNumber = cardNumber,
+                CardNumber = cardNumberText,
                 DisplayType = selectedDisplayType
             };
 
             CardRepository.Instance.AddCard(newCard);
 
-            Frame.Navigate(typeof(MainPage));
+            Frame.GoBack();
         }
     }
 }

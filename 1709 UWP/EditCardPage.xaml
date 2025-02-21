@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="_1709_UWP.EditCardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="20">
+        <StackPanel Spacing="10">
+            <TextBlock Text="Edit Card" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
+            <TextBox Header="Card Name" Text="{Binding CardName, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <TextBox Header="Card Nickname" Text="{Binding CardNickname, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <TextBox Header="Card Number" Text="{Binding CardNumber, Mode=TwoWay}" Margin="0,0,0,10"/>
+            <Button Content="Save" Click="SaveCard_Click" Width="100" HorizontalAlignment="Right"/>
+        </StackPanel>
+    </Grid>
+</Page>
