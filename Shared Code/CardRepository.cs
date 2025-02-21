@@ -1,5 +1,6 @@
 using SQLite;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Shared_Code
 {
@@ -38,6 +39,26 @@ namespace Shared_Code
         {
             _database.Insert(card);
             Cards.Add(card);
+        }
+
+        public void EditCard(Card card)
+        {
+            _database.Update(card);
+            var existingCard = Cards.FirstOrDefault(c => c.Id == card.Id);
+            if (existingCard != null)
+            {
+                int index = Cards.IndexOf(existingCard);
+                if (index >= 0 && index < Cards.Count)
+                {
+                    Cards[index] = card;
+                }
+            }
+        }
+
+        public void DeleteCard(Card card)
+        {
+            _database.Delete(card);
+            Cards.Remove(card);
         }
     }
 }
