@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Navigation;
 using Shared_Code;
 using Windows.UI.Xaml;
+using System;
 
 namespace _1709_UWP
 {
@@ -26,6 +27,11 @@ namespace _1709_UWP
         {
             if (DataContext is Card selectedCard)
             {
+                if (displayPicker.SelectedItem is ComboBoxItem selectedDisplayTypeItem &&
+                    Enum.TryParse(selectedDisplayTypeItem.Content.ToString(), out DisplayType selectedDisplayType))
+                {
+                    selectedCard.DisplayType = selectedDisplayType;
+                }
                 CardRepository.Instance.EditCard(selectedCard);
                 Frame.GoBack();
             }
