@@ -41,6 +41,7 @@ Coming soon!
 ## Folder Structure
 
 - `1709 UWP`: UWP app implementation which supports devices on Windows 1709 and above (looking at you W10M) - Uses UWP WinUI. Recommended for Windows 10 Mobile users.
+- `1809 UWP`: UWP app implementation which supports devices on Windows 1809 and above (Includes 10X!) - Uses WinUI 2. Recommended for all Windows device users.
 - `MAUI`: MAUI app implementation which supports devices on Windows 1809 and above (Buggy due to Xzing.Net.MAUI library on Windows), Android, iOS and Mac - Recommended for non-Windows platform users.
 - `Shared Code`: Project which holds the code shared by all projects.
 
