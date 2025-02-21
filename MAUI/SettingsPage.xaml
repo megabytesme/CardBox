@@ -3,14 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CardBox.SettingsPage"
              xmlns:local="clr-namespace:CardBox">
-
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-
-        <local:NavbarControl Grid.Column="0" />
     </Grid>
 
 </ContentPage>

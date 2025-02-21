@@ -10,8 +10,6 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <local:NavbarControl Grid.Column="0" />
-
         <ScrollView Grid.Column="1">
             <Frame Margin="10" Background="#05FFFFFF" >
                 <StackLayout >

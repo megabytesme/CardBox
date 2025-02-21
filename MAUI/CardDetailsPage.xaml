@@ -9,9 +9,7 @@
             <ColumnDefinition Width="60" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-
-        <local:NavbarControl Grid.Column="0" />
-
+        
         <ScrollView Grid.Column="1">
             <StackLayout Padding="10">
                 <Label Text="{Binding CardName}" FontSize="24" Margin="0,0,0,20"/>
