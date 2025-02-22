@@ -1,24 +1,22 @@
 ﻿using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml;
 using ZXing;
 using ZXing.Common;
-using ZXing.Rendering;
 using Windows.UI.Xaml.Media.Imaging;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System;
 using Shared_Code;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
-using System.Collections.ObjectModel;
 
 namespace _1709_UWP
 {
     public sealed partial class SettingsPage : Page
     {
+        private readonly CardImportExport _importExport = new CardImportExport();
+
         public SettingsPage()
         {
             this.InitializeComponent();
@@ -77,108 +75,114 @@ namespace _1709_UWP
                 if (inputResult == ContentDialogResult.Primary)
                 {
                     string importedText = textBox.Text;
-                    await ImportCardsFromText(importedText);
+                    await ImportCardsFromTextAsync(importedText);
                 }
             }
             else if (result == ContentDialogResult.Secondary)
             {
-                var fileOpenPicker = new Windows.Storage.Pickers.FileOpenPicker();
-                fileOpenPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-                fileOpenPicker.FileTypeFilter.Add(".jpg");
-                fileOpenPicker.FileTypeFilter.Add(".jpeg");
-                fileOpenPicker.FileTypeFilter.Add(".png");
+                await ImportCardsFromBarcodeAsync();
+            }
+        }
 
-                var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.VideoCapture);
+        private async Task ImportCardsFromBarcodeAsync()
+        {
+            var fileOpenPicker = new Windows.Storage.Pickers.FileOpenPicker();
+            fileOpenPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            fileOpenPicker.FileTypeFilter.Add(".jpg");
+            fileOpenPicker.FileTypeFilter.Add(".jpeg");
+            fileOpenPicker.FileTypeFilter.Add(".png");
 
-                if (devices.Count > 0)
+            var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.VideoCapture);
+
+            if (devices.Count > 0)
+            {
+                var cameraCapture = new Windows.Media.Capture.CameraCaptureUI();
+                cameraCapture.PhotoSettings.Format = Windows.Media.Capture.CameraCaptureUIPhotoFormat.Jpeg;
+                cameraCapture.PhotoSettings.CroppedSizeInPixels = new Windows.Foundation.Size(200, 200);
+
+                var photo = await cameraCapture.CaptureFileAsync(Windows.Media.Capture.CameraCaptureUIMode.Photo);
+
+                if (photo != null)
                 {
-                    var cameraCapture = new Windows.Media.Capture.CameraCaptureUI();
-                    cameraCapture.PhotoSettings.Format = Windows.Media.Capture.CameraCaptureUIPhotoFormat.Jpeg;
-                    cameraCapture.PhotoSettings.CroppedSizeInPixels = new Windows.Foundation.Size(200, 200);
-
-                    var photo = await cameraCapture.CaptureFileAsync(Windows.Media.Capture.CameraCaptureUIMode.Photo);
-
-                    if (photo != null)
-                    {
-                        var stream = await photo.OpenAsync(Windows.Storage.FileAccessMode.Read);
-                        var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
-                        var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
-
-                        var barcodeReader = new BarcodeReader();
-                        var scanResult = barcodeReader.Decode(bitmap);
-
-                        if (scanResult != null)
-                        {
-                            await ImportCardsFromText(scanResult.Text);
-                        }
-                        else
-                        {
-                            await new ContentDialog
-                            {
-                                Title = "Error",
-                                Content = "Failed to read barcode.",
-                                CloseButtonText = "OK"
-                            }.ShowAsync();
-                        }
-                    }
+                    await ProcessBarcodePhotoAsync(photo);
                 }
-                else
+            }
+            else
+            {
+                var file = await fileOpenPicker.PickSingleFileAsync();
+                if (file != null)
                 {
-                    var file = await fileOpenPicker.PickSingleFileAsync();
-                    if (file != null)
-                    {
-                        var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
-                        var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
-                        var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
-
-                        var barcodeReader = new BarcodeReader();
-                        var scanResult = barcodeReader.Decode(bitmap);
-
-                        if (scanResult != null)
-                        {
-                            await ImportCardsFromText(scanResult.Text);
-                        }
-                        else
-                        {
-                            await new ContentDialog
-                            {
-                                Title = "Error",
-                                Content = "Failed to read barcode.",
-                                CloseButtonText = "OK"
-                            }.ShowAsync();
-                        }
-                    }
+                    await ProcessBarcodeFileAsync(file);
                 }
             }
         }
 
-        private async Task ImportCardsFromText(string importedText)
+        private async Task ProcessBarcodePhotoAsync(Windows.Storage.StorageFile photo)
+        {
+            var stream = await photo.OpenAsync(Windows.Storage.FileAccessMode.Read);
+            var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
+            var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
+
+            var barcodeReader = new ZXing.BarcodeReader();
+            var scanResult = barcodeReader.Decode(bitmap);
+
+            if (scanResult != null)
+            {
+                await ImportCardsFromTextAsync(scanResult.Text);
+            }
+            else
+            {
+                await ShowErrorDialog("Failed to read barcode.");
+            }
+        }
+
+        private async Task ProcessBarcodeFileAsync(Windows.Storage.StorageFile file)
+        {
+            var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
+            var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
+            var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
+
+            var barcodeReader = new ZXing.BarcodeReader();
+            var scanResult = barcodeReader.Decode(bitmap);
+
+            if (scanResult != null)
+            {
+                await ImportCardsFromTextAsync(scanResult.Text);
+            }
+            else
+            {
+                await ShowErrorDialog("Failed to read barcode.");
+            }
+        }
+
+        private async Task ImportCardsFromTextAsync(string importedText)
         {
             progressRing.IsActive = true;
             try
             {
-                var importedCards = JsonConvert.DeserializeObject<ObservableCollection<Card>>(importedText);
-                foreach (var card in importedCards)
+                var importedCards = _importExport.ImportCardsFromTextAsync(importedText);
+
+                if (importedCards != null)
                 {
-                    CardRepository.Instance.AddCard(card);
+                    foreach (var card in importedCards)
+                    {
+                        CardRepository.Instance.Cards.Add(card);
+                        CardRepository.Instance.Database.Insert(card);
+                    }
+
+                    progressRing.IsActive = false;
+                    await ShowSuccessDialog("Cards imported successfully!");
                 }
-                progressRing.IsActive = false;
-                await new ContentDialog
+                else
                 {
-                    Title = "Success",
-                    Content = "Cards imported successfully!",
-                    CloseButtonText = "OK"
-                }.ShowAsync();
+                    progressRing.IsActive = false;
+                    await ShowErrorDialog("Failed to import cards. Invalid data.");
+                }
             }
             catch (Exception ex)
             {
                 progressRing.IsActive = false;
-                await new ContentDialog
-                {
-                    Title = "Error",
-                    Content = $"Failed to import cards: {ex.Message}",
-                    CloseButtonText = "OK"
-                }.ShowAsync();
+                await ShowErrorDialog($"Failed to import cards: {ex.Message}");
             }
         }
 
@@ -187,8 +191,9 @@ namespace _1709_UWP
             progressRing.IsActive = true;
 
             var cards = CardRepository.Instance.Cards;
-            var serializedCards = JsonConvert.SerializeObject(cards);
-            var qrCodeBitmap = await GenerateQrCodeAsync(serializedCards);
+            string exportedText = _importExport.ExportCardsToText(cards);
+
+            var qrCodeBitmap = await GenerateQrCodeAsync(exportedText);
 
             progressRing.IsActive = false;
 
@@ -203,14 +208,21 @@ namespace _1709_UWP
             var dialog = new ContentDialog
             {
                 Title = "Exported QR Code",
-                Content = new ScrollViewer
-                {
-                    Content = image
-                },
+                Content = new ScrollViewer { Content = image },
                 CloseButtonText = "OK"
             };
 
             await dialog.ShowAsync();
+        }
+
+        private async Task ShowErrorDialog(string message)
+        {
+            await new ContentDialog { Title = "Error", Content = message, CloseButtonText = "OK" }.ShowAsync();
+        }
+
+        private async Task ShowSuccessDialog(string message)
+        {
+            await new ContentDialog { Title = "Success", Content = message, CloseButtonText = "OK" }.ShowAsync();
         }
 
         private async Task<WriteableBitmap> GenerateQrCodeAsync(string content)
@@ -222,9 +234,9 @@ namespace _1709_UWP
                     Format = BarcodeFormat.QR_CODE,
                     Options = new EncodingOptions
                     {
-                        Height = 200,
-                        Width = 200,
-                        Margin = 1
+                        Height = 400,
+                        Width = 400,
+                        Margin = 0
                     }
                 };
 
