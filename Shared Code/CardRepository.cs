@@ -8,6 +8,7 @@ namespace Shared_Code
     {
         private static CardRepository _instance;
         private readonly SQLiteConnection _database;
+        public SQLiteConnection Database => _database;
         public ObservableCollection<Card> Cards { get; private set; }
 
         private CardRepository()

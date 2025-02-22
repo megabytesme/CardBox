@@ -33,7 +33,7 @@ namespace _1709_UWP
             Frame rootFrame = Window.Current.Content as Frame;
             if (rootFrame != null && rootFrame.Content is MainPage mainPage)
             {
-                //mainPage.MainContentFrame.Navigate(typeof(SettingsPage));
+                mainPage.MainContentFrame.Navigate(typeof(SettingsPage));
             }
         }
     }
