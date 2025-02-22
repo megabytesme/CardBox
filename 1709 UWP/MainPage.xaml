@@ -11,11 +11,11 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="54" />
+            <ColumnDefinition Width="55" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <local:NavbarControl HorizontalAlignment="Center" Width="57"/>
+        <local:NavbarControl HorizontalAlignment="Center" Width="55"/>
 
         <Frame x:Name="ContentFrame" Grid.Column="1" Margin="10,10,10,10"/>
     </Grid>
