@@ -44,19 +44,11 @@ namespace _1709_UWP
 
         private async void ImportCards_Click(object sender, RoutedEventArgs e)
         {
-            var textBox = new TextBox
-            {
-                PlaceholderText = "Paste QR code content here",
-                AcceptsReturn = true,
-                Height = 100,
-                TextWrapping = TextWrapping.Wrap
-            };
-
             var dialog = new ContentDialog
             {
                 Title = "Import Cards",
-                Content = textBox,
-                PrimaryButtonText = "Import",
+                PrimaryButtonText = "Paste Text",
+                SecondaryButtonText = "Scan Barcode",
                 CloseButtonText = "Cancel"
             };
 
@@ -64,33 +56,129 @@ namespace _1709_UWP
 
             if (result == ContentDialogResult.Primary)
             {
-                progressRing.IsActive = true;
-                string importedText = textBox.Text;
-                try
+                var textBox = new TextBox
                 {
-                    var importedCards = JsonConvert.DeserializeObject<ObservableCollection<Card>>(importedText);
-                    foreach (var card in importedCards)
+                    PlaceholderText = "Paste QR code content here",
+                    AcceptsReturn = true,
+                    Height = 100,
+                    TextWrapping = TextWrapping.Wrap
+                };
+
+                var inputDialog = new ContentDialog
+                {
+                    Title = "Paste QR Code Content",
+                    Content = textBox,
+                    PrimaryButtonText = "Import",
+                    CloseButtonText = "Cancel"
+                };
+
+                var inputResult = await inputDialog.ShowAsync();
+
+                if (inputResult == ContentDialogResult.Primary)
+                {
+                    string importedText = textBox.Text;
+                    await ImportCardsFromText(importedText);
+                }
+            }
+            else if (result == ContentDialogResult.Secondary)
+            {
+                var fileOpenPicker = new Windows.Storage.Pickers.FileOpenPicker();
+                fileOpenPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+                fileOpenPicker.FileTypeFilter.Add(".jpg");
+                fileOpenPicker.FileTypeFilter.Add(".jpeg");
+                fileOpenPicker.FileTypeFilter.Add(".png");
+
+                var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.VideoCapture);
+
+                if (devices.Count > 0)
+                {
+                    var cameraCapture = new Windows.Media.Capture.CameraCaptureUI();
+                    cameraCapture.PhotoSettings.Format = Windows.Media.Capture.CameraCaptureUIPhotoFormat.Jpeg;
+                    cameraCapture.PhotoSettings.CroppedSizeInPixels = new Windows.Foundation.Size(200, 200);
+
+                    var photo = await cameraCapture.CaptureFileAsync(Windows.Media.Capture.CameraCaptureUIMode.Photo);
+
+                    if (photo != null)
                     {
-                        CardRepository.Instance.AddCard(card);
+                        var stream = await photo.OpenAsync(Windows.Storage.FileAccessMode.Read);
+                        var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
+                        var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
+
+                        var barcodeReader = new BarcodeReader();
+                        var scanResult = barcodeReader.Decode(bitmap);
+
+                        if (scanResult != null)
+                        {
+                            await ImportCardsFromText(scanResult.Text);
+                        }
+                        else
+                        {
+                            await new ContentDialog
+                            {
+                                Title = "Error",
+                                Content = "Failed to read barcode.",
+                                CloseButtonText = "OK"
+                            }.ShowAsync();
+                        }
                     }
-                    progressRing.IsActive = false;
-                    await new ContentDialog
-                    {
-                        Title = "Success",
-                        Content = "Cards imported successfully!",
-                        CloseButtonText = "OK"
-                    }.ShowAsync();
                 }
-                catch (Exception ex)
+                else
                 {
-                    progressRing.IsActive = false;
-                    await new ContentDialog
+                    var file = await fileOpenPicker.PickSingleFileAsync();
+                    if (file != null)
                     {
-                        Title = "Error",
-                        Content = $"Failed to import cards: {ex.Message}",
-                        CloseButtonText = "OK"
-                    }.ShowAsync();
+                        var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
+                        var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
+                        var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
+
+                        var barcodeReader = new BarcodeReader();
+                        var scanResult = barcodeReader.Decode(bitmap);
+
+                        if (scanResult != null)
+                        {
+                            await ImportCardsFromText(scanResult.Text);
+                        }
+                        else
+                        {
+                            await new ContentDialog
+                            {
+                                Title = "Error",
+                                Content = "Failed to read barcode.",
+                                CloseButtonText = "OK"
+                            }.ShowAsync();
+                        }
+                    }
                 }
+            }
+        }
+
+        private async Task ImportCardsFromText(string importedText)
+        {
+            progressRing.IsActive = true;
+            try
+            {
+                var importedCards = JsonConvert.DeserializeObject<ObservableCollection<Card>>(importedText);
+                foreach (var card in importedCards)
+                {
+                    CardRepository.Instance.AddCard(card);
+                }
+                progressRing.IsActive = false;
+                await new ContentDialog
+                {
+                    Title = "Success",
+                    Content = "Cards imported successfully!",
+                    CloseButtonText = "OK"
+                }.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                progressRing.IsActive = false;
+                await new ContentDialog
+                {
+                    Title = "Error",
+                    Content = $"Failed to import cards: {ex.Message}",
+                    CloseButtonText = "OK"
+                }.ShowAsync();
             }
         }
 
