@@ -3,16 +3,28 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Shared_Code;
-using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation.Metadata;
 using Windows.UI;
-using Microsoft.UI.Xaml.Media;
+using Windows.UI.Xaml.Media;
+using System.Linq;
+using muxc = Microsoft.UI.Xaml.Controls;
 
 namespace _1809_UWP
 {
     public sealed partial class HomePage : Page
     {
         public ObservableCollection<Card> Cards => CardRepository.Instance.Cards;
+
+        private ObservableCollection<Card> filteredCards;
+        public ObservableCollection<Card> FilteredCards
+        {
+            get => filteredCards ?? Cards;
+            set
+            {
+                filteredCards = value;
+                Bindings.Update();
+            }
+        }
 
         public HomePage()
         {
@@ -25,7 +37,7 @@ namespace _1809_UWP
         {
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
             {
-            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
+                muxc.BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
             }
             else
             {
@@ -44,6 +56,15 @@ namespace _1809_UWP
             if (sender is Button button && button.CommandParameter is Card selectedCard)
             {
                 Frame.Navigate(typeof(CardDetailPage), selectedCard);
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (e.Parameter is ObservableCollection<Card> filteredCards)
+            {
+                FilteredCards = filteredCards;
             }
         }
     }

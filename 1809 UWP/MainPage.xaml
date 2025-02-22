@@ -11,24 +11,46 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid>
-            <TextBlock Text="CardBox" FontSize="16" VerticalAlignment="Top" Margin="60,5,0,0" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
 
-            <muxc:NavigationView x:Name="NavView" IsBackButtonVisible="Collapsed" ItemInvoked="NavView_ItemInvoked">
-                <muxc:NavigationView.MenuItems>
-                    <muxc:NavigationViewItem Content="Home" Tag="HomePage">
-                        <muxc:NavigationViewItem.Icon>
-                            <SymbolIcon Symbol="Home" />
-                        </muxc:NavigationViewItem.Icon>
-                    </muxc:NavigationViewItem>
-                    <muxc:NavigationViewItem Content="Add Card" Tag="AddCardPage">
-                        <muxc:NavigationViewItem.Icon>
-                            <SymbolIcon Symbol="Add" />
-                        </muxc:NavigationViewItem.Icon>
-                    </muxc:NavigationViewItem>
-                </muxc:NavigationView.MenuItems>
-                <Frame Margin="0,30" x:Name="ContentFrame" />
-            </muxc:NavigationView>
+        <Grid x:Name="AppTitleBar" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
+                <ColumnDefinition/>
+                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="CardBox" FontSize="16" VerticalAlignment="Center" Margin="60,0,0,0" Grid.Column="1"/>
         </Grid>
+
+        <AutoSuggestBox x:Name="SearchBox"
+                QueryIcon="Find"
+                PlaceholderText="Search cards..."
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                MinWidth="80"
+                MaxWidth="200"
+                Height="32"
+                TextChanged="SearchBox_TextChanged"
+                Margin="10,0,10,0"/>
+
+        <muxc:NavigationView Grid.Row="1" x:Name="NavView" IsBackButtonVisible="Collapsed" ItemInvoked="NavView_ItemInvoked">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Content="Home" Tag="HomePage">
+                    <muxc:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Home" />
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem Content="Add Card" Tag="AddCardPage">
+                    <muxc:NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Add" />
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.MenuItems>
+            <Frame Margin="0,30" x:Name="ContentFrame" />
+        </muxc:NavigationView>
     </Grid>
 </Page>
