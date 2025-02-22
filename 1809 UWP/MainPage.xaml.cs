@@ -26,6 +26,25 @@ namespace _1809_UWP
                 DataContext = this;
 
             Loaded += MainPage_Loaded;
+            ApplyBackdropOrAcrylic();
+        }
+
+        private void ApplyBackdropOrAcrylic()
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
+            {
+            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
+            }
+            else
+            {
+                this.Background = new AcrylicBrush
+                {
+                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
+                    TintColor = Colors.Transparent,
+                    TintOpacity = 0.6,
+                    FallbackColor = Colors.Gray
+                };
+            }
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
