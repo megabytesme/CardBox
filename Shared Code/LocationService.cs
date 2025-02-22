@@ -57,9 +57,18 @@ public static class LocationService
                     }
                 }
             }
-
-            return MergeNearbyLocations(locations, mergeDistanceKm);
         }
+
+        var mergedLocations = MergeNearbyLocations(locations, mergeDistanceKm);
+
+        foreach (var loc in mergedLocations)
+        {
+            loc.Distance = CalculateDistance(
+                new Location { Latitude = latitude, Longitude = longitude },
+                loc);
+        }
+
+        return mergedLocations.OrderBy(loc => loc.Distance).ToList();
     }
 
     private static string CalculateBoundingBox(double latitude, double longitude, int radiusInKm)
@@ -157,5 +166,6 @@ public static class LocationService
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string Address { get; set; }
+        public double Distance { get; set; }
     }
 }
