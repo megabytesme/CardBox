@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
@@ -6,11 +7,7 @@ using Shared_Code;
 using ZXing;
 using ZXing.Common;
 using ZXing.Rendering;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Microsoft.UI.Xaml.Controls;
-using Windows.Foundation.Metadata;
-using Windows.UI;
-using Windows.UI.Xaml.Media;
+using System;
 
 namespace _1809_UWP
 {
@@ -19,25 +16,6 @@ namespace _1809_UWP
         public CardDetailPage()
         {
             this.InitializeComponent();
-            ApplyBackdropOrAcrylic();
-        }
-
-        private void ApplyBackdropOrAcrylic()
-        {
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
-            {
-            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
-            }
-            else
-            {
-                this.Background = new AcrylicBrush
-                {
-                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
-                    TintColor = Colors.Transparent,
-                    TintOpacity = 0.6,
-                    FallbackColor = Colors.Gray
-                };
-            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -75,6 +53,33 @@ namespace _1809_UWP
             }
 
             return bitmap;
+        }
+
+        private void EditCard_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is Card selectedCard)
+            {
+                Frame.Navigate(typeof(EditCardPage), selectedCard);
+            }
+        }
+
+        private async void DeleteCard_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog deleteDialog = new ContentDialog
+            {
+                Title = "Delete Card",
+                Content = "Are you sure you want to delete this card?",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel"
+            };
+
+            ContentDialogResult result = await deleteDialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && DataContext is Card selectedCard)
+            {
+                CardRepository.Instance.DeleteCard(selectedCard);
+                Frame.GoBack();
+            }
         }
     }
 }

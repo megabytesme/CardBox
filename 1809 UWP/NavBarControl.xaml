@@ -8,7 +8,7 @@
 
     <Grid>
         <Grid.Background>
-            <AcrylicBrush BackgroundSource="HostBackdrop" TintColor="#99000000" TintOpacity="0.6" />
+            <AcrylicBrush BackgroundSource="HostBackdrop" TintColor="#99000000" TintOpacity="0.6" FallbackColor="#0A0A0A" />
         </Grid.Background>
 
         <StackPanel Orientation="Vertical" Margin="5" Spacing="5">

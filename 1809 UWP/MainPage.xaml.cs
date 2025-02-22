@@ -23,34 +23,16 @@ namespace _1809_UWP
         public MainPage()
         {
             this.InitializeComponent();
-            ApplyBackdropOrAcrylic();
-            DataContext = this;
+                DataContext = this;
+
+            Loaded += MainPage_Loaded;
         }
 
-        private void ApplyBackdropOrAcrylic()
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
-            {
-            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
-            }
-            else
-            {
-                this.Background = new AcrylicBrush
-                {
-                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
-                    TintColor = Colors.Transparent,
-                    TintOpacity = 0.6,
-                    FallbackColor = Colors.Gray
-                };
-            }
+            ContentFrame.Navigate(typeof(HomePage));
         }
 
-        private void ViewCard_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.CommandParameter is Card selectedCard)
-            {
-                Frame.Navigate(typeof(CardDetailPage), selectedCard);
-            }
-        }
+        public Frame MainContentFrame => ContentFrame;
     }
 }

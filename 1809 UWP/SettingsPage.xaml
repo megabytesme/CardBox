@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="_1809_UWP.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="20">
+        <StackPanel Spacing="10">
+            <TextBlock Text="Settings" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
+            <Button Content="Reset App" Click="ResetApp_Click" Width="200" HorizontalAlignment="Center" Foreground="Red"/>
+            <Button Content="Import Cards" Click="ImportCards_Click" Width="200" HorizontalAlignment="Center"/>
+            <Button Content="Export Cards" Click="ExportCards_Click" Width="200" HorizontalAlignment="Center"/>
+            <ProgressRing x:Name="progressRing" IsActive="False" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
+        </StackPanel>
+    </Grid>
+</Page>
