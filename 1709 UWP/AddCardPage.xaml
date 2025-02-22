@@ -27,10 +27,12 @@
                         <ComboBoxItem Content="QrCode" />
                         <ComboBoxItem Content="Bar128" />
                     </ComboBox>
-
-                    <Button Content="Add Card" Click="OnAddCard" />
                 </StackPanel>
             </Border>
         </ScrollViewer>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Spacing="10">
+            <Button Content="Add Card" Click="OnAddCard" />
+            <Button Content="Scan Card" Click="OnScanCard" />
+        </StackPanel>
     </Grid>
 </Page>
