@@ -1,4 +1,7 @@
-﻿using System.Runtime.InteropServices.WindowsRuntime;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -7,11 +10,12 @@ using Shared_Code;
 using ZXing;
 using ZXing.Common;
 using ZXing.Rendering;
-using System;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Microsoft.UI.Xaml.Media;
+using Windows.Devices.Geolocation;
+using Windows.UI.Xaml.Media;
 
 namespace _1809_UWP
 {
@@ -31,9 +35,9 @@ namespace _1809_UWP
             }
             else
             {
-                this.Background = new AcrylicBrush
+                this.Background = new Microsoft.UI.Xaml.Media.AcrylicBrush
                 {
-                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
+                    BackgroundSource = Microsoft.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
                     TintColor = Colors.Transparent,
                     TintOpacity = 0.6,
                     FallbackColor = Colors.Gray
@@ -41,7 +45,7 @@ namespace _1809_UWP
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -51,6 +55,41 @@ namespace _1809_UWP
 
                 var barcodeBitmap = GenerateBarcode(selectedCard.CardNumber.ToString(), selectedCard.DisplayType);
                 barcodeImage.Source = barcodeBitmap;
+
+                loadingProgressRing.Visibility = Visibility.Visible;
+                loadingProgressRing.IsActive = true;
+
+                var currentLocation = await GetCurrentLocationAsync();
+
+                if (currentLocation != null)
+                {
+                    var locations = await LocationService.GetNearbyLocationsAsync(
+                        currentLocation.Position.Latitude,
+                        currentLocation.Position.Longitude,
+                        selectedCard.CardName);
+
+                    if (locations != null && locations.Count > 0)
+                    {
+                        locationsListView.ItemsSource = locations;
+                        noLocationsTextBlock.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        locationsListView.ItemsSource = null;
+                        noLocationsTextBlock.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    locationsListView.ItemsSource = new List<LocationService.Location>
+            {
+                new LocationService.Location { Name = "Could not retrieve location." }
+            };
+                    noLocationsTextBlock.Visibility = Visibility.Visible;
+                }
+
+                loadingProgressRing.Visibility = Visibility.Collapsed;
+                loadingProgressRing.IsActive = false;
             }
         }
 
@@ -102,6 +141,40 @@ namespace _1809_UWP
             {
                 CardRepository.Instance.DeleteCard(selectedCard);
                 Frame.GoBack();
+            }
+        }
+
+        private async void NavigateToLocation_Click(object sender, RoutedEventArgs e)
+        {
+            var location = (sender as FrameworkElement).DataContext as LocationService.Location;
+            if (location != null)
+            {
+                var uri = new Uri($"ms-drive-to:?destination.latitude={location.Latitude}&destination.longitude={location.Longitude}");
+                await Windows.System.Launcher.LaunchUriAsync(uri);
+            }
+        }
+
+        private async Task<Geopoint> GetCurrentLocationAsync()
+        {
+            try
+            {
+                var accessStatus = await Geolocator.RequestAccessAsync();
+
+                if (accessStatus == GeolocationAccessStatus.Allowed)
+                {
+                    Geolocator geolocator = new Geolocator();
+                    Geoposition pos = await geolocator.GetGeopositionAsync();
+                    return pos.Coordinate.Point;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error getting location: " + ex.Message);
+                return null;
             }
         }
     }

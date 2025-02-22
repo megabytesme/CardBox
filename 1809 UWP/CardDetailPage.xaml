@@ -10,14 +10,64 @@
 
     <Grid Padding="20">
         <ScrollViewer>
-            <StackPanel Spacing="10">
-                <TextBlock Text="{Binding CardName}" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
-                <TextBlock Text="{Binding CardNickname}" FontSize="20" Margin="0,0,0,10" Foreground="LightGray"/>
-                <Image x:Name="barcodeImage" Height="200" Width="200" Margin="0,10" HorizontalAlignment="Center"/>
-                <TextBlock Text="{Binding CardNumber}" FontSize="20" Margin="0,-10" HorizontalAlignment="Center" Foreground="LightGray"/>
+            <StackPanel Spacing="20">
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="20">
+                    <Border.Background>
+                        <AcrylicBrush BackgroundSource="Backdrop" TintColor="Transparent" TintOpacity="0.6" FallbackColor="Gray"/>
+                    </Border.Background>
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="{Binding CardName}" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
+                        <TextBlock Text="{Binding CardNickname}" FontSize="20" Margin="0,0,0,10" Foreground="LightGray"/>
+                        <Grid>
+                            <Border Height="200" Width="200" CornerRadius="8">
+                                <Image x:Name="barcodeImage" Height="200" Width="200" Stretch="Fill"/>
+                            </Border>
+                        </Grid>
+                        <TextBlock Text="{Binding CardNumber}" FontSize="20" Margin="0,-10" HorizontalAlignment="Center" Foreground="LightGray"/>
+                    </StackPanel>
+                </Border>
+
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="20">
+                    <Border.Background>
+                        <AcrylicBrush BackgroundSource="Backdrop" TintColor="Transparent" TintOpacity="0.6" FallbackColor="Gray"/>
+                    </Border.Background>
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Nearby Locations" FontSize="20" Margin="0,0,0,10" Foreground="LightGray"/>
+                        <ProgressRing x:Name="loadingProgressRing" IsActive="False" Visibility="Collapsed" Width="40" Height="40" HorizontalAlignment="Center"/>
+                        <ListView x:Name="locationsListView" Height="200" SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Name}" FontSize="16" Foreground="White" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Distance}" FontSize="14" Foreground="LightGray" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Address}" FontSize="14" Foreground="LightGray" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                            <Button Click="NavigateToLocation_Click" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="4">
+                                                <Button.Content>
+                                                    <FontIcon Glyph="&#xE816;" />
+                                                </Button.Content>
+                                            </Button>
+                                        </Grid>
+                                        <Border Height="1" Background="Gray" Margin="0,10,0,10"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBlock x:Name="noLocationsTextBlock" Text="No nearby locations found." FontSize="16" Foreground="LightGray" Visibility="Collapsed" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Location data provided by © OpenStreetMap contributors and Nominatim." FontSize="12" Margin="0,0,0,0" Foreground="LightGray" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Spacing="10">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Spacing="10" Margin="0,-40">
             <Button Content="Edit" Click="EditCard_Click" Width="100" CornerRadius="4"/>
             <Button Content="Delete" Click="DeleteCard_Click" Width="100" Foreground="Red" CornerRadius="4"/>
         </StackPanel>
