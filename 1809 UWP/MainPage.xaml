@@ -6,17 +6,29 @@
     xmlns:local1="using:Shared_Code"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="55" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+        <Grid>
+            <TextBlock Text="CardBox" FontSize="16" VerticalAlignment="Top" Margin="60,5,0,0" />
 
-        <local:NavbarControl HorizontalAlignment="Center" Width="55"/>
-
-        <Frame x:Name="ContentFrame" Grid.Column="1" Margin="10,10,10,10"/>
+            <muxc:NavigationView x:Name="NavView" IsBackButtonVisible="Collapsed" ItemInvoked="NavView_ItemInvoked">
+                <muxc:NavigationView.MenuItems>
+                    <muxc:NavigationViewItem Content="Home" Tag="HomePage">
+                        <muxc:NavigationViewItem.Icon>
+                            <SymbolIcon Symbol="Home" />
+                        </muxc:NavigationViewItem.Icon>
+                    </muxc:NavigationViewItem>
+                    <muxc:NavigationViewItem Content="Add Card" Tag="AddCardPage">
+                        <muxc:NavigationViewItem.Icon>
+                            <SymbolIcon Symbol="Add" />
+                        </muxc:NavigationViewItem.Icon>
+                    </muxc:NavigationViewItem>
+                </muxc:NavigationView.MenuItems>
+                <Frame Margin="0,30" x:Name="ContentFrame" />
+            </muxc:NavigationView>
+        </Grid>
     </Grid>
 </Page>

@@ -5,17 +5,11 @@ using Windows.UI.Xaml.Media;
 using Shared_Code;
 using Windows.Foundation.Metadata;
 using Windows.UI;
-using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
-using Microsoft.UI.Xaml.Controls;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+using Windows.UI.Core;
+using muxc = Microsoft.UI.Xaml.Controls;
 
 namespace _1809_UWP
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
         public ObservableCollection<Card> Cards => CardRepository.Instance.Cards;
@@ -23,17 +17,24 @@ namespace _1809_UWP
         public MainPage()
         {
             this.InitializeComponent();
-                DataContext = this;
+            DataContext = this;
 
-            Loaded += MainPage_Loaded;
             ApplyBackdropOrAcrylic();
+
+            NavView.ItemInvoked += NavView_ItemInvoked;
+            Loaded += MainPage_Loaded;
+            ContentFrame.Navigated += ContentFrame_Navigated;
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
         private void ApplyBackdropOrAcrylic()
         {
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
             {
-            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
+                muxc.BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
             }
             else
             {
@@ -50,6 +51,57 @@ namespace _1809_UWP
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             ContentFrame.Navigate(typeof(HomePage));
+            NavView.SelectedItem = NavView.MenuItems[0];
+        }
+
+        private void NavView_ItemInvoked(muxc.NavigationView sender, muxc.NavigationViewItemInvokedEventArgs args)
+        {
+            if (args.IsSettingsInvoked)
+            {
+                ContentFrame.Navigate(typeof(SettingsPage));
+            }
+            else
+            {
+                var item = args.InvokedItemContainer as muxc.NavigationViewItem;
+                switch (item.Tag.ToString())
+                {
+                    case "HomePage":
+                        ContentFrame.Navigate(typeof(HomePage));
+                        break;
+                    case "AddCardPage":
+                        ContentFrame.Navigate(typeof(AddCardPage));
+                        break;
+                }
+            }
+        }
+
+        private void ContentFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        {
+            var backButton = (Button)FindName("BackButton");
+            if (backButton != null)
+            {
+                backButton.Visibility = ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = ContentFrame.CanGoBack ?
+                 AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Disabled;
+        }
+
+        private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (ContentFrame.CanGoBack)
+            {
+                e.Handled = true;
+                GoBack();
+            }
+        }
+
+        private void GoBack()
+        {
+            if (ContentFrame.CanGoBack)
+            {
+                ContentFrame.GoBack();
+            }
         }
 
         public Frame MainContentFrame => ContentFrame;
