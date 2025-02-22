@@ -30,10 +30,10 @@
                     <StackPanel Spacing="10">
                         <TextBlock Text="Nearby Locations" FontSize="20" Margin="0,0,0,10" Foreground="LightGray"/>
                         <ProgressRing x:Name="loadingProgressRing" IsActive="False" Visibility="Collapsed" Width="40" Height="40" HorizontalAlignment="Center"/>
-                        <ListView x:Name="locationsListView" Height="200" SelectionMode="None">
+                        <ListView x:Name="locationsListView" Height="200" SelectionMode="None" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
+                                    <StackPanel HorizontalAlignment="Stretch">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
@@ -43,16 +43,16 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Name}" FontSize="16" Foreground="White" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Name}" FontSize="16" Foreground="White" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                             <TextBlock Text="{Binding Distance}" FontSize="14" Foreground="LightGray" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                                            <TextBlock Text="{Binding Address}" FontSize="14" Foreground="LightGray" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Address}" FontSize="14" Foreground="LightGray" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Stretch"/>
                                             <Button Click="NavigateToLocation_Click" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
                                                 <Button.Content>
                                                     <FontIcon Glyph="&#xE816;" />
                                                 </Button.Content>
                                             </Button>
                                         </Grid>
-                                        <Border Height="1" Background="Gray" Margin="0,10,0,10"/>
+                                        <Border Height="1" Width="9999999999999" Background="Gray" Margin="0,10,0,10"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
