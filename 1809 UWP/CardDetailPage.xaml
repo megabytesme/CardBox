@@ -62,6 +62,7 @@
                             </ListView.ItemTemplate>
                         </ListView>
                         <TextBlock x:Name="noLocationsTextBlock" Text="No nearby locations found." FontSize="16" Foreground="LightGray" Visibility="Collapsed" HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="locationErrorTextBlock" Text="Could not retrieve location." FontSize="16" Foreground="LightGray" Visibility="Collapsed" HorizontalAlignment="Center"/>
                         <TextBlock Text="Location data provided by © OpenStreetMap contributors and Nominatim." FontSize="12" Margin="0,0,0,0" Foreground="LightGray" HorizontalAlignment="Right"/>
                     </StackPanel>
                 </Border>

@@ -72,20 +72,20 @@ namespace _1809_UWP
                     {
                         locationsListView.ItemsSource = locations;
                         noLocationsTextBlock.Visibility = Visibility.Collapsed;
+                        locationErrorTextBlock.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
                         locationsListView.ItemsSource = null;
                         noLocationsTextBlock.Visibility = Visibility.Visible;
+                        locationErrorTextBlock.Visibility = Visibility.Collapsed;
                     }
                 }
                 else
                 {
-                    locationsListView.ItemsSource = new List<LocationService.Location>
-            {
-                new LocationService.Location { Name = "Could not retrieve location." }
-            };
-                    noLocationsTextBlock.Visibility = Visibility.Visible;
+                    locationsListView.ItemsSource = null;
+                    noLocationsTextBlock.Visibility = Visibility.Collapsed;
+                    locationErrorTextBlock.Visibility = Visibility.Visible;
                 }
 
                 loadingProgressRing.Visibility = Visibility.Collapsed;
