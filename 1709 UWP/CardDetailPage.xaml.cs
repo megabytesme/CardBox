@@ -8,6 +8,9 @@ using ZXing;
 using ZXing.Common;
 using ZXing.Rendering;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
 
 namespace _1709_UWP
 {
@@ -18,7 +21,7 @@ namespace _1709_UWP
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -28,6 +31,41 @@ namespace _1709_UWP
 
                 var barcodeBitmap = GenerateBarcode(selectedCard.CardNumber.ToString(), selectedCard.DisplayType);
                 barcodeImage.Source = barcodeBitmap;
+
+                loadingProgressRing.Visibility = Visibility.Visible;
+                loadingProgressRing.IsActive = true;
+
+                var currentLocation = await GetCurrentLocationAsync();
+
+                if (currentLocation != null)
+                {
+                    var locations = await LocationService.GetNearbyLocationsAsync(
+                        currentLocation.Position.Latitude,
+                        currentLocation.Position.Longitude,
+                        selectedCard.CardName);
+
+                    if (locations != null && locations.Count > 0)
+                    {
+                        locationsListView.ItemsSource = locations;
+                        noLocationsTextBlock.Visibility = Visibility.Collapsed;
+                        locationErrorTextBlock.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        locationsListView.ItemsSource = null;
+                        noLocationsTextBlock.Visibility = Visibility.Visible;
+                        locationErrorTextBlock.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else
+                {
+                    locationsListView.ItemsSource = null;
+                    noLocationsTextBlock.Visibility = Visibility.Collapsed;
+                    locationErrorTextBlock.Visibility = Visibility.Visible;
+                }
+
+                loadingProgressRing.Visibility = Visibility.Collapsed;
+                loadingProgressRing.IsActive = false;
             }
         }
 
@@ -79,6 +117,40 @@ namespace _1709_UWP
             {
                 CardRepository.Instance.DeleteCard(selectedCard);
                 Frame.GoBack();
+            }
+        }
+
+        private async void NavigateToLocation_Click(object sender, RoutedEventArgs e)
+        {
+            var location = (sender as FrameworkElement).DataContext as LocationService.Location;
+            if (location != null)
+            {
+                var uri = new Uri($"ms-drive-to:?destination.latitude={location.Latitude}&destination.longitude={location.Longitude}");
+                await Windows.System.Launcher.LaunchUriAsync(uri);
+            }
+        }
+
+        private async Task<Geopoint> GetCurrentLocationAsync()
+        {
+            try
+            {
+                var accessStatus = await Geolocator.RequestAccessAsync();
+
+                if (accessStatus == GeolocationAccessStatus.Allowed)
+                {
+                    Geolocator geolocator = new Geolocator();
+                    Geoposition pos = await geolocator.GetGeopositionAsync();
+                    return pos.Coordinate.Point;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error getting location: " + ex.Message);
+                return null;
             }
         }
     }
