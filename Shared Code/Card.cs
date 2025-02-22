@@ -5,14 +5,14 @@ namespace Shared_Code
 {
     public class Card : INotifyPropertyChanged
     {
-        private int _id;
+        private long _id;
         private string _cardName;
         private string _cardNickname;
         private string _cardNumber;
         private DisplayType _displayType;
 
         [PrimaryKey, AutoIncrement]
-        public int Id
+        public long Id
         {
             get => _id;
             set
