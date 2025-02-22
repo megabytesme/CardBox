@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
+using System.Collections.ObjectModel;
 
 namespace _1709_UWP
 {
@@ -38,6 +39,58 @@ namespace _1709_UWP
             {
                 CardRepository.Instance.Cards.Clear();
                 CardRepository.Instance.Database.DeleteAll<Card>();
+            }
+        }
+
+        private async void ImportCards_Click(object sender, RoutedEventArgs e)
+        {
+            var textBox = new TextBox
+            {
+                PlaceholderText = "Paste QR code content here",
+                AcceptsReturn = true,
+                Height = 100,
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            var dialog = new ContentDialog
+            {
+                Title = "Import Cards",
+                Content = textBox,
+                PrimaryButtonText = "Import",
+                CloseButtonText = "Cancel"
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                progressRing.IsActive = true;
+                string importedText = textBox.Text;
+                try
+                {
+                    var importedCards = JsonConvert.DeserializeObject<ObservableCollection<Card>>(importedText);
+                    foreach (var card in importedCards)
+                    {
+                        CardRepository.Instance.AddCard(card);
+                    }
+                    progressRing.IsActive = false;
+                    await new ContentDialog
+                    {
+                        Title = "Success",
+                        Content = "Cards imported successfully!",
+                        CloseButtonText = "OK"
+                    }.ShowAsync();
+                }
+                catch (Exception ex)
+                {
+                    progressRing.IsActive = false;
+                    await new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = $"Failed to import cards: {ex.Message}",
+                        CloseButtonText = "OK"
+                    }.ShowAsync();
+                }
             }
         }
 
