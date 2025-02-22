@@ -8,23 +8,18 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <local:NavbarControl Background="Black" HorizontalAlignment="Center" Width="57"/>
-
-        <ScrollViewer Grid.Column="1">
-            <StackPanel Padding="10">
-                <TextBlock Text="{Binding CardName}" FontSize="24" Margin="0,0,0,20"/>
-                <TextBlock Text="{Binding CardNickname}" Margin="0,0,0,10"/>
-                <Image x:Name="barcodeImage" Height="200" Width="200" Margin="0,0,0,10"/>
-                <TextBlock Text="{Binding CardNumber}" Margin="0,0,0,10"/>
-                <TextBlock Text="Display Type:" Margin="0,0,0,10"/>
-                <TextBlock Text="{Binding DisplayType}" Margin="0,0,0,10"/>
+    <Grid Padding="20">
+        <ScrollViewer>
+            <StackPanel Spacing="10">
+                <TextBlock Text="{Binding CardName}" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
+                <TextBlock Text="{Binding CardNickname}" FontSize="20" Margin="0,0,0,10" Foreground="LightGray"/>
+                <Image x:Name="barcodeImage" Height="200" Width="200" Margin="0,10" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding CardNumber}" FontSize="20" Margin="0,-10" HorizontalAlignment="Center" Foreground="LightGray"/>
             </StackPanel>
         </ScrollViewer>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Spacing="10">
+            <Button Content="Edit" Click="EditCard_Click" Width="100"/>
+            <Button Content="Delete" Click="DeleteCard_Click" Width="100" Foreground="Red"/>
+        </StackPanel>
     </Grid>
 </Page>

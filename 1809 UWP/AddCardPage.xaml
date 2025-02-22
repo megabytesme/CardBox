@@ -10,15 +10,8 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <local:NavbarControl Background="Black" HorizontalAlignment="Center" Width="57"/>
-
-        <ScrollViewer Grid.Column="1" Margin="10">
-            <Border Background="Transparent" Padding="10" >
+        <ScrollViewer Margin="10">
+            <Border Background="Black" Padding="10" >
                 <StackPanel Spacing="10">
                     <TextBlock Text="Name of Card:" Margin="0,0,0,5" />
                     <TextBox x:Name="cardNameEntry" PlaceholderText="Enter name of card (required)" Margin="0,0,0,15"/>
@@ -34,10 +27,12 @@
                         <ComboBoxItem Content="QrCode" />
                         <ComboBoxItem Content="Bar128" />
                     </ComboBox>
-
-                    <Button Content="Add Card" Click="OnAddCard" />
                 </StackPanel>
             </Border>
         </ScrollViewer>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Spacing="10">
+            <Button Content="Add Card" Click="OnAddCard" />
+            <Button Content="Scan Card" Click="OnScanCard" />
+        </StackPanel>
     </Grid>
 </Page>

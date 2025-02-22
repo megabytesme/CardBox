@@ -2,10 +2,11 @@
 using Windows.UI.Xaml.Controls;
 using Shared_Code;
 using System;
-using Microsoft.UI.Xaml.Controls;
-using Windows.Foundation.Metadata;
-using Windows.UI;
-using Windows.UI.Xaml.Media;
+using ZXing;
+using Windows.Media.Capture;
+using Windows.Storage;
+using Windows.Graphics.Imaging;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace _1809_UWP
 {
@@ -14,26 +15,6 @@ namespace _1809_UWP
         public AddCardPage()
         {
             this.InitializeComponent();
-            ApplyBackdropOrAcrylic();
-
-        }
-
-        private void ApplyBackdropOrAcrylic()
-        {
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
-            {
-            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
-            }
-            else
-            {
-                this.Background = new AcrylicBrush
-                {
-                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
-                    TintColor = Colors.Transparent,
-                    TintOpacity = 0.6,
-                    FallbackColor = Colors.Gray
-                };
-            }
         }
 
         private async void OnAddCard(object sender, RoutedEventArgs e)
@@ -49,18 +30,6 @@ namespace _1809_UWP
                 {
                     Title = "Error",
                     Content = "Please fill all required fields.",
-                    CloseButtonText = "OK"
-                };
-                await dialog.ShowAsync();
-                return;
-            }
-
-            if (!int.TryParse(cardNumberText, out int cardNumber))
-            {
-                var dialog = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = "Card number must be a valid integer.",
                     CloseButtonText = "OK"
                 };
                 await dialog.ShowAsync();
@@ -83,13 +52,53 @@ namespace _1809_UWP
             {
                 CardName = cardName,
                 CardNickname = cardNickname,
-                CardNumber = cardNumber,
+                CardNumber = cardNumberText,
                 DisplayType = selectedDisplayType
             };
 
             CardRepository.Instance.AddCard(newCard);
 
-            Frame.Navigate(typeof(MainPage));
+            Frame.GoBack();
+        }
+
+        private async void OnScanCard(object sender, RoutedEventArgs e)
+        {
+            var cameraCapture = new CameraCaptureUI();
+            cameraCapture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
+            cameraCapture.PhotoSettings.CroppedSizeInPixels = new Windows.Foundation.Size(200, 200);
+
+            var photo = await cameraCapture.CaptureFileAsync(CameraCaptureUIMode.Photo);
+            if (photo != null)
+            {
+                var stream = await photo.OpenAsync(FileAccessMode.Read);
+                var bitmapDecoder = await BitmapDecoder.CreateAsync(stream);
+                var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
+
+                var barcodeReader = new BarcodeReader();
+                var result = barcodeReader.Decode(bitmap);
+
+                if (result != null)
+                {
+                    cardNumberEntry.Text = result.Text;
+                    if (result.BarcodeFormat == BarcodeFormat.QR_CODE)
+                    {
+                        displayPicker.SelectedItem = displayPicker.Items[0];
+                    }
+                    else if (result.BarcodeFormat == BarcodeFormat.CODE_128)
+                    {
+                        displayPicker.SelectedItem = displayPicker.Items[1];
+                    }
+                }
+                else
+                {
+                    await new ContentDialog
+                    {
+                        Title = "Error",
+                        Content = "Failed to read barcode.",
+                        CloseButtonText = "OK"
+                    }.ShowAsync();
+                }
+            }
         }
     }
 }
