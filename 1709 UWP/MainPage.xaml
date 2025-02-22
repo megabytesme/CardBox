@@ -7,8 +7,8 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Margin="0" Padding="0">
-        <NavigationView x:Name="NavView" IsBackButtonVisible="Collapsed" ItemInvoked="NavView_ItemInvoked" Margin="0" Padding="0">
+    <Grid>
+        <NavigationView Grid.Row="1" x:Name="NavView" IsBackButtonVisible="Collapsed" ItemInvoked="NavView_ItemInvoked">
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Home" Tag="HomePage">
                     <NavigationViewItem.Icon>
@@ -21,7 +21,19 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
-            <Frame Margin="0,40" Padding="0,0" x:Name="ContentFrame" />
+            <Grid Background="Transparent">
+                <AutoSuggestBox x:Name="SearchBox"
+                            QueryIcon="Find"
+                            PlaceholderText="Search cards..."
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            MinWidth="200"
+                            MaxWidth="200"
+                            Height="32"
+                            TextChanged="SearchBox_TextChanged"
+                            Margin="0,5,10,0"/>
+                <Frame Margin="0,37" x:Name="ContentFrame" />
+            </Grid>
         </NavigationView>
     </Grid>
 </Page>
