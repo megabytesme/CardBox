@@ -8,7 +8,6 @@ using Windows.UI;
 using Windows.UI.Xaml.Media;
 using System.Linq;
 using muxc = Microsoft.UI.Xaml.Controls;
-
 namespace _1809_UWP
 {
     public sealed partial class HomePage : Page
@@ -23,6 +22,7 @@ namespace _1809_UWP
             {
                 filteredCards = value;
                 Bindings.Update();
+                UpdateNoCardsUI();
             }
         }
 
@@ -31,6 +31,7 @@ namespace _1809_UWP
             this.InitializeComponent();
             DataContext = this;
             ApplyBackdropOrAcrylic();
+            UpdateNoCardsUI();
         }
 
         private void ApplyBackdropOrAcrylic()
@@ -59,6 +60,18 @@ namespace _1809_UWP
             }
         }
 
+        private void UpdateNoCardsUI()
+        {
+            bool noCards = FilteredCards == null || !FilteredCards.Any();
+            NoCardsTextBlock.Visibility = noCards ? Visibility.Visible : Visibility.Collapsed;
+            AddCardButton.Visibility = noCards ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void AddCardButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AddCardPage));
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -66,6 +79,7 @@ namespace _1809_UWP
             {
                 FilteredCards = filteredCards;
             }
+            UpdateNoCardsUI();
         }
     }
 }

@@ -13,7 +13,7 @@
     <Grid>
         <ScrollViewer Margin="10,10,10,10">
             <StackPanel>
-                <ItemsControl ItemsSource="{x:Bind FilteredCards}">
+                <ItemsControl x:Name="CardsItemsControl" ItemsSource="{x:Bind FilteredCards}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="local1:Card">
                             <Grid>
@@ -35,6 +35,8 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                <TextBlock x:Name="NoCardsTextBlock" Text="No cards available." Visibility="Collapsed" HorizontalAlignment="Center" Margin="10"/>
+                <Button x:Name="AddCardButton" Content="Add Card" Click="AddCardButton_Click" Visibility="Collapsed" HorizontalAlignment="Center" Margin="10"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>
