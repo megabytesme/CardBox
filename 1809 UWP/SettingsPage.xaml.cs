@@ -14,6 +14,10 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using System.Collections.ObjectModel;
+using Microsoft.UI.Xaml.Controls;
+using Windows.Foundation.Metadata;
+using Windows.UI;
+using Microsoft.UI.Xaml.Media;
 
 namespace _1809_UWP
 {
@@ -22,6 +26,25 @@ namespace _1809_UWP
         public SettingsPage()
         {
             this.InitializeComponent();
+            ApplyBackdropOrAcrylic();
+        }
+
+        private void ApplyBackdropOrAcrylic()
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
+            {
+            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
+            }
+            else
+            {
+                this.Background = new AcrylicBrush
+                {
+                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
+                    TintColor = Colors.Transparent,
+                    TintOpacity = 0.6,
+                    FallbackColor = Colors.Gray
+                };
+            }
         }
 
         private async void ResetApp_Click(object sender, RoutedEventArgs e)

@@ -7,31 +7,35 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Grid.Background>
-            <AcrylicBrush BackgroundSource="HostBackdrop" TintColor="#99000000" TintOpacity="0.6" FallbackColor="#0A0A0A" />
-        </Grid.Background>
-
-        <StackPanel Orientation="Vertical" Margin="5" Spacing="5">
-            <Button x:Name="HomeButton" Click="OnHomeClicked">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE80F;" FontSize="24" Foreground="White"/>
+            <Rectangle Fill="Black" Opacity="0.5" RadiusX="8" RadiusY="8" Margin="10"/>
+            <Border HorizontalAlignment="Stretch" CornerRadius="8">
+                <Border.Background>
+                    <AcrylicBrush BackgroundSource="Backdrop" TintColor="#99000000" TintOpacity="0" FallbackColor="#2D2D2D" />
+                </Border.Background>
+            <Grid>
+                <StackPanel Orientation="Vertical" Margin="5" Spacing="5">
+                    <Button x:Name="HomeButton" Click="OnHomeClicked" CornerRadius="4">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE80F;" FontSize="24" Foreground="White"/>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="AddButton" Click="OnAddClicked" CornerRadius="4">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE710;" FontSize="24" Foreground="White"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
-            </Button>
-            <Button x:Name="AddButton" Click="OnAddClicked">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE710;" FontSize="24" Foreground="White"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
 
-        <Grid>
-            <StackPanel Orientation="Vertical" Margin="5" Spacing="5" VerticalAlignment="Bottom">
-                <Button x:Name="SettingsButton" Click="OnSettingsClicked">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Foreground="White"/>
+                <Grid>
+                    <StackPanel Orientation="Vertical" Margin="5" Spacing="5" VerticalAlignment="Bottom">
+                        <Button x:Name="SettingsButton" Click="OnSettingsClicked" CornerRadius="4">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="24" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

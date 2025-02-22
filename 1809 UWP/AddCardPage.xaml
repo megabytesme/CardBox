@@ -11,19 +11,19 @@
 
     <Grid>
         <ScrollViewer Margin="10">
-            <Border Background="Black" Padding="10" >
+            <Border Padding="10" >
                 <StackPanel Spacing="10">
                     <TextBlock Text="Name of Card:" Margin="0,0,0,5" />
-                    <TextBox x:Name="cardNameEntry" PlaceholderText="Enter name of card (required)" Margin="0,0,0,15"/>
+                    <TextBox x:Name="cardNameEntry" PlaceholderText="Enter name of card (required)" Margin="0,0,0,15" CornerRadius="4"/>
 
                     <TextBlock Text="Nickname of Card:" Margin="0,0,0,5" />
-                    <TextBox x:Name="cardNicknameEntry" PlaceholderText="Enter nickname of card (optional)" Margin="0,0,0,15"/>
+                    <TextBox x:Name="cardNicknameEntry" PlaceholderText="Enter nickname of card (optional)" Margin="0,0,0,15" CornerRadius="4"/>
 
                     <TextBlock Text="Card Number:" Margin="0,0,0,5" />
-                    <TextBox x:Name="cardNumberEntry" PlaceholderText="Enter card number (required)" Margin="0,0,0,15"/>
+                    <TextBox x:Name="cardNumberEntry" PlaceholderText="Enter card number (required)" Margin="0,0,0,15" CornerRadius="4"/>
 
                     <TextBlock Text="Card Display Type:" Margin="0,0,0,5" />
-                    <ComboBox x:Name="displayPicker" Margin="0,0,0,15">
+                    <ComboBox x:Name="displayPicker" Margin="0,0,0,15" CornerRadius="4">
                         <ComboBoxItem Content="QrCode" />
                         <ComboBoxItem Content="Bar128" />
                     </ComboBox>
@@ -31,8 +31,8 @@
             </Border>
         </ScrollViewer>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Spacing="10">
-            <Button Content="Add Card" Click="OnAddCard" />
-            <Button Content="Scan Card" Click="OnScanCard" />
+            <Button Content="Add Card" Click="OnAddCard" CornerRadius="4"/>
+            <Button Content="Scan Card" Click="OnScanCard" CornerRadius="4"/>
         </StackPanel>
     </Grid>
 </Page>
