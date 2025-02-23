@@ -13,6 +13,7 @@ using Windows.UI.Core;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Documents;
 
 namespace _1709_UWP
 {
@@ -235,6 +236,72 @@ namespace _1709_UWP
 
                 return bitmap;
             });
+        }
+
+        private async void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "About CardBox Tool",
+                Content = new ScrollViewer()
+                {
+                    Content = new TextBlock()
+                    {
+                        Inlines =
+                        {
+                            new Run() { Text = "CardBox Tool" },
+                            new LineBreak(),
+                            new Run() { Text = "Version 1.0.0.0 (1709_UWP)" },
+                            new LineBreak(),
+                            new Run() { Text = "Copyright © 2025 MegaBytesMe" },
+                            new LineBreak(),
+                            new Run() { Text = " "},
+                            new LineBreak(),
+                            new Run() { Text = "Source code available on " },
+                            new Hyperlink()
+                            {
+                                NavigateUri = new Uri("https://github.com/megabytesme/CardBox"),
+                                Inlines = { new Run() { Text = "GitHub" } }
+                            },
+                            new LineBreak(),
+                            new Run() { Text = "Anything wrong? Let us know: " },
+                            new Hyperlink()
+                            {
+                                NavigateUri = new Uri("https://github.com/megabytesme/CardBox/issues"),
+                                Inlines = { new Run() { Text = "Support" } }
+                            },
+                            new LineBreak(),
+                            new Run() { Text = "Privacy Policy: " },
+                            new Hyperlink()
+                            {
+                                NavigateUri = new Uri("https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md"),
+                                Inlines = { new Run() { Text = "Privacy Policy" } }
+                            },
+                            new LineBreak(),
+                            new Run() { Text = "Like what you see? View my " },
+                            new Hyperlink()
+                            {
+                                NavigateUri = new Uri("https://github.com/megabytesme"),
+                                Inlines = { new Run() { Text = "GitHub" } }
+                            },
+                            new Run() { Text = " and maybe my " },
+                            new Hyperlink()
+                            {
+                                NavigateUri = new Uri("https://apps.microsoft.com/search?query=megabytesme"),
+                                Inlines = { new Run() { Text = "Other Apps" } }
+                            },
+                            new LineBreak(),
+                            new Run() { Text = " "},
+                            new LineBreak(),
+                            new Run() { Text = "CardBox is designed to help you manage your loyalty cards effortlessly." }
+                        },
+                        TextWrapping = TextWrapping.Wrap
+                    }
+                },
+                CloseButtonText = "OK"
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }

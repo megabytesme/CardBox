@@ -13,6 +13,7 @@
             <Button Content="Reset App" Click="ResetApp_Click" Width="200" HorizontalAlignment="Center" Foreground="Red"/>
             <Button Content="Import Cards" Click="ImportCards_Click" Width="200" HorizontalAlignment="Center"/>
             <Button Content="Export Cards" Click="ExportCards_Click" Width="200" HorizontalAlignment="Center"/>
+            <Button Content="About" Click="AboutButton_Click" Width="200" HorizontalAlignment="Center"/>
             <ProgressRing x:Name="progressRing" IsActive="False" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
         </StackPanel>
     </Grid>

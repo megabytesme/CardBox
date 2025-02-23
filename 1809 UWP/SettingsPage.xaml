@@ -37,6 +37,11 @@
                         Width="200"
                         CornerRadius="4"
                         HorizontalAlignment="Center"/>
+                <Button Content="About"
+                        Click="AboutButton_Click"
+                        Width="200"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"/>
                 <ProgressRing x:Name="progressRing"
                               IsActive="False"
                               Width="40"
