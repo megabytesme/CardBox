@@ -16,18 +16,12 @@ namespace CardBox
         {
             string cardName = ((Entry)FindByName("cardNameEntry")).Text;
             string cardNickname = ((Entry)FindByName("cardNicknameEntry")).Text;
-            string cardNumberText = ((Entry)FindByName("cardNumberEntry")).Text;
+            string cardNumber = ((Entry)FindByName("cardNumberEntry")).Text;
             Picker displayPicker = (Picker)FindByName("picker");
 
-            if (string.IsNullOrWhiteSpace(cardName) || string.IsNullOrWhiteSpace(cardNumberText) || displayPicker.SelectedIndex == -1)
+            if (string.IsNullOrWhiteSpace(cardName) || string.IsNullOrWhiteSpace(cardNumber) || displayPicker.SelectedIndex == -1)
             {
                 await DisplayAlert("Error", "Please fill all required fields.", "OK");
-                return;
-            }
-
-            if (!int.TryParse(cardNumberText, out int cardNumber))
-            {
-                await DisplayAlert("Error", "Card number must be a valid integer.", "OK");
                 return;
             }
 
