@@ -18,8 +18,27 @@ namespace CardBox
 
             barcodeImage.Format = selectedCard.DisplayType switch
             {
-                DisplayType.Bar128 => BarcodeFormat.Code128,
+                DisplayType.Code128 => BarcodeFormat.Code128,
                 DisplayType.QrCode => BarcodeFormat.QrCode,
+                DisplayType.Aztec => BarcodeFormat.Aztec,
+                DisplayType.Codabar => BarcodeFormat.Codabar,
+                DisplayType.Code39 => BarcodeFormat.Code39,
+                DisplayType.Code93 => BarcodeFormat.Code93,
+                DisplayType.DataMatrix => BarcodeFormat.DataMatrix,
+                DisplayType.Ean8 => BarcodeFormat.Ean8,
+                DisplayType.Ean13 => BarcodeFormat.Ean13,
+                DisplayType.Itf => BarcodeFormat.Itf,
+                DisplayType.MaxiCode => BarcodeFormat.MaxiCode,
+                DisplayType.Pdf417 => BarcodeFormat.Pdf417,
+                DisplayType.Rss14 => BarcodeFormat.Rss14,
+                DisplayType.RssExpanded => BarcodeFormat.RssExpanded,
+                DisplayType.UpcA => BarcodeFormat.UpcA,
+                DisplayType.UpcE => BarcodeFormat.UpcE,
+                DisplayType.UpcEanExtension => BarcodeFormat.UpcEanExtension,
+                DisplayType.Msi => BarcodeFormat.Msi,
+                DisplayType.Plessey => BarcodeFormat.Plessey,
+                DisplayType.Imb => BarcodeFormat.Imb,
+                DisplayType.PharmaCode => BarcodeFormat.PharmaCode,
                 _ => BarcodeFormat.QrCode
             };
 
