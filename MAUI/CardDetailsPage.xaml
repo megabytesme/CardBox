@@ -6,7 +6,7 @@
              x:Class="CardBox.CardDetailPage">
 
     <Grid Padding="8" RowDefinitions="Auto, *, Auto" RowSpacing="10">
-        <Frame BorderColor="LightGray" Padding="10" Grid.Row="0" CornerRadius="8" BackgroundColor="Transparent">
+        <Frame BorderColor="Gray" Padding="10" Grid.Row="0" CornerRadius="8" BackgroundColor="Transparent">
             <Grid RowDefinitions="Auto, Auto, Auto, Auto">
                 <Label Text="{Binding CardName}" FontSize="28" FontAttributes="Bold" Grid.Row="0" />
                 <Label Text="{Binding CardNickname}" FontSize="20" Grid.Row="1" />
@@ -25,7 +25,7 @@
             </Grid>
         </Frame>
 
-        <Frame BorderColor="LightGray" Padding="8" Grid.Row="1" CornerRadius="8" BackgroundColor="Transparent">
+        <Frame BorderColor="Gray" Padding="8" Grid.Row="1" CornerRadius="8" BackgroundColor="Transparent">
             <Grid RowDefinitions="Auto, Auto, *, Auto, Auto, Auto">
                 <Label Text="Nearby Locations" FontSize="20" Margin="0,0,0,10" Grid.Row="0" />
                 <ActivityIndicator x:Name="loadingProgressRing" IsRunning="False" IsVisible="False" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" Grid.Row="1" />
