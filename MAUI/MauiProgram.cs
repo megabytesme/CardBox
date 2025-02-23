@@ -12,6 +12,7 @@ namespace CardBox
             builder
                 .UseMauiApp<App>()
                 .UseBarcodeReader()
+                .UseBarcodeReader()
                 .UseMaterialColors()
                 .ConfigureFonts(fonts =>
                 {
