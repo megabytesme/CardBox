@@ -4,14 +4,16 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using System.Threading.Tasks;
+using ZXing;
 
 namespace Shared_Code
 {
     public class CardImportExport
     {
-        public ObservableCollection<Card> ImportCardsFromTextAsync(string importedText)
+        public ObservableCollection<Card> ImportCardsFromTextAsync(string importedText, out List<Card> invalidCards)
         {
+            invalidCards = new List<Card>();
+
             try
             {
                 string decompressedJson = DecompressJson(importedText);
@@ -23,27 +25,26 @@ namespace Shared_Code
                     long nextId = 1;
                     foreach (var dict in importedDictionaries)
                     {
-                        var card = new Card();
-                        card.Id = nextId++;
-                        if (dict.ContainsKey("n")) card.CardName = (string)dict["n"];
-                        if (dict.ContainsKey("k")) card.CardNickname = (string)dict["k"];
-                        if (dict.ContainsKey("c")) card.CardNumber = (string)dict["c"];
-                        if (dict.ContainsKey("t"))
+                        var card = new Card
                         {
-                            if (long.TryParse(dict["t"].ToString(), out long tValue))
-                            {
-                                try
-                                {
-                                    card.DisplayType = (DisplayType)(int)tValue;
-                                }
-                                catch (OverflowException ex)
-                                {
-                                    Console.WriteLine($"Overflow Exception: {ex.Message}");
-                                    card.DisplayType = DisplayType.QrCode;
-                                }
-                            }
+                            Id = nextId++,
+                            CardName = dict.ContainsKey("n") ? (string)dict["n"] : string.Empty,
+                            CardNickname = dict.ContainsKey("k") ? (string)dict["k"] : string.Empty,
+                            CardNumber = dict.ContainsKey("c") ? (string)dict["c"] : string.Empty,
+                            DisplayType = dict.ContainsKey("t") && Enum.TryParse(dict["t"].ToString(), out BarcodeFormat format)
+                                         ? format
+                                         : BarcodeFormat.QR_CODE
+                        };
+
+                        if (BarcodeHelper.ValidateBarcode(card.CardNumber, card.DisplayType, out string errorMessage))
+                        {
+                            importedCards.Add(card);
                         }
-                        importedCards.Add(card);
+                        else
+                        {
+                            invalidCards.Add(card);
+                            Console.WriteLine($"Invalid barcode for card '{card.CardName}': {errorMessage}");
+                        }
                     }
                 }
                 return importedCards;
@@ -68,11 +69,13 @@ namespace Shared_Code
 
             foreach (var card in cards)
             {
-                var optimizedCard = new Dictionary<string, object>();
-                optimizedCard["n"] = card.CardName;
-                optimizedCard["k"] = card.CardNickname;
-                optimizedCard["c"] = card.CardNumber;
-                optimizedCard["t"] = (int)card.DisplayType;
+                var optimizedCard = new Dictionary<string, object>
+                {
+                    ["n"] = card.CardName,
+                    ["k"] = card.CardNickname,
+                    ["c"] = card.CardNumber,
+                    ["t"] = (int)card.DisplayType
+                };
                 optimizedCards.Add(optimizedCard);
             }
 

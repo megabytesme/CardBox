@@ -9,6 +9,7 @@
     <Import_RootNamespace>Shared_Code</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BarcodeHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Card.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CardImportExport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CardRepository.cs" />
