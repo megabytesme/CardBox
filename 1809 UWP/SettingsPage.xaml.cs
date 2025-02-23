@@ -14,6 +14,8 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Microsoft.UI.Xaml.Media;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace _1809_UWP
 {
@@ -183,7 +185,7 @@ namespace _1809_UWP
             progressRing.IsActive = true;
             try
             {
-                var importedCards = _importExport.ImportCardsFromTextAsync(importedText);
+                var importedCards = _importExport.ImportCardsFromTextAsync(importedText, out List<Card> invalidCards);
 
                 if (importedCards != null)
                 {
@@ -194,7 +196,17 @@ namespace _1809_UWP
                     }
 
                     progressRing.IsActive = false;
-                    await ShowSuccessDialog("Cards imported successfully!");
+
+                    if (invalidCards.Count > 0)
+                    {
+                        string invalidCardsMessage = "The following cards are invalid and have not been added:\n" +
+                                                     string.Join("\n", invalidCards.Select(c => c.CardName));
+                        await ShowWarningDialog(invalidCardsMessage);
+                    }
+                    else
+                    {
+                        await ShowSuccessDialog("Cards imported successfully!");
+                    }
                 }
                 else
                 {
@@ -207,6 +219,17 @@ namespace _1809_UWP
                 progressRing.IsActive = false;
                 await ShowErrorDialog($"Failed to import cards: {ex.Message}");
             }
+        }
+
+        private async Task ShowWarningDialog(string message)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Warning",
+                Content = message,
+                CloseButtonText = "OK"
+            };
+            await dialog.ShowAsync();
         }
 
         private async void ExportCards_Click(object sender, RoutedEventArgs e)

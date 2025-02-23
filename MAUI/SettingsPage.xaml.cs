@@ -241,7 +241,7 @@ namespace CardBox
             progressRing.IsVisible = true;
             try
             {
-                var importedCards =  _importExport.ImportCardsFromTextAsync(importedText);
+                var importedCards = _importExport.ImportCardsFromTextAsync(importedText, out List<Card> invalidCards);
 
                 if (importedCards != null)
                 {
@@ -251,7 +251,16 @@ namespace CardBox
                         CardRepository.Instance.Database.Insert(card);
                     }
 
-                    await DisplayAlert("Success", "Cards imported successfully!", "OK");
+                    if (invalidCards.Count > 0)
+                    {
+                        string invalidCardsMessage = "The following cards are invalid and have not been added:\n" +
+                                                     string.Join("\n", invalidCards.Select(c => c.CardName));
+                        await DisplayAlert("Warning", invalidCardsMessage, "OK");
+                    }
+                    else
+                    {
+                        await DisplayAlert("Success", "Cards imported successfully!", "OK");
+                    }
                 }
                 else
                 {
