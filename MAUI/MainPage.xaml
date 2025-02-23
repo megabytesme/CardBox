@@ -5,14 +5,20 @@
              x:Class="CardBox.MainPage"
              x:Name="mainPage">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <local:NavbarControl Grid.Column="0" />
+        <local:NavbarControl Grid.Column="0" Grid.RowSpan="2" />
 
-        <CollectionView ItemsSource="{Binding Cards}" Grid.Column="1" Margin="10">
+        <SearchBar Grid.Column="1" Grid.Row="0" Placeholder="Search cards" TextChanged="OnSearchTextChanged" Margin="10"/>
+
+        <CollectionView ItemsSource="{Binding FilteredCards}" Grid.Column="1" Grid.Row="1" Margin="10">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <ScrollView>
