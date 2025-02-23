@@ -141,24 +141,21 @@ namespace CardBox
 
         private async void NavigateToLocation_Click(object sender, EventArgs e)
         {
-            if (BindingContext is LocationService.Location selectedLocation)
+            if (sender is Button button && button.BindingContext is LocationService.Location selectedLocation)
             {
-                string uri = $"geo:{selectedLocation.Latitude},{selectedLocation.Longitude}";
+                var options = new MapLaunchOptions
+                {
+                    Name = selectedLocation.Name,
+                    NavigationMode = NavigationMode.Driving
+                };
 
-                if (await Launcher.CanOpenAsync(new Uri(uri)))
+                try
                 {
-                    try
-                    {
-                        await Launcher.OpenAsync(new Uri(uri));
-                    }
-                    catch (Exception ex)
-                    {
-                        await DisplayAlert("Error", "Could not open maps: " + ex.Message, "OK");
-                    }
+                    await Map.Default.OpenAsync(new Location(selectedLocation.Latitude, selectedLocation.Longitude), options);
                 }
-                else
+                catch (Exception ex)
                 {
-                    await DisplayAlert("Error", "No maps app found.", "OK");
+                    await DisplayAlert("Error", "No map application available to open.", "OK");
                 }
             }
         }
