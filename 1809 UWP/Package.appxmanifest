@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="9a67cbb2-b8ac-4c9f-aeb3-cf5ef1397881"
-    Publisher="CN=ben"
+    Name="MegaBytesMe.CardBoxTool"
+    Publisher="CN=F0BC24FD-E28E-4D47-BEEA-3B6CF444653E"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="9a67cbb2-b8ac-4c9f-aeb3-cf5ef1397881" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="c0f5e1de-deb6-4989-96eb-e0fb3e35575d" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>_1809_UWP</DisplayName>
-    <PublisherDisplayName>ben</PublisherDisplayName>
+    <DisplayName>CardBox Tool</DisplayName>
+    <PublisherDisplayName>MegaBytesMe</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
