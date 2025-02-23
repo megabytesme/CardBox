@@ -10,17 +10,17 @@
 
         private async void OnHomeClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("//MainPage");
+            await Navigation.PushAsync(new MainPage());
         }
 
         private async void OnAddClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("//AddCardPage"); 
+            await Navigation.PushAsync(new AddCardPage());
         }
 
         private async void OnSettingsClicked(object sender, EventArgs e)
         {
-            await Shell.Current.GoToAsync("//SettingsPage");
+            await Navigation.PushAsync(new SettingsPage());
         }
 
         private void SetButtonTextsAndFonts()
