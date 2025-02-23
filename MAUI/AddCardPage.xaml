@@ -5,11 +5,6 @@
              x:Class="CardBox.AddCardPage">
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
         <ScrollView Grid.Column="1">
             <Frame Margin="10" Background="#05FFFFFF" >
                 <StackLayout >
