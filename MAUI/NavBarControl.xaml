@@ -1,12 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CardBox.NavbarControl">
-    <StackLayout Orientation="Vertical" BackgroundColor="#05FFFFFF" Margin="5" Spacing="5">
-        <Button x:Name="HomeButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnHomeClicked" />
-        <Button x:Name="AddButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnAddClicked" />
+             x:Class="CardBox.NavbarControl"
+             BackgroundColor="{DynamicResource SurfaceVariant}">
+    <StackLayout Orientation="Vertical"
+                 Margin="5"
+                 Spacing="5">
+
+        <Button x:Name="HomeButton"
+                Style="{StaticResource PlatformButtonStyle}"
+                BackgroundColor="{DynamicResource Primary}"
+                TextColor="{DynamicResource OnPrimary}"
+                Text="🏠"
+                Clicked="OnHomeClicked" 
+                CornerRadius="8" />
+
+        <Button x:Name="AddButton"
+                Style="{StaticResource PlatformButtonStyle}"
+                BackgroundColor="{DynamicResource Primary}"
+                TextColor="{DynamicResource OnPrimary}"
+                Text="➕"
+                Clicked="OnAddClicked"
+                CornerRadius="8" />
+
         <StackLayout VerticalOptions="EndAndExpand">
-            <Button x:Name="SettingsButton" Style="{StaticResource PlatformButtonStyle}" Clicked="OnSettingsClicked" />
+            <Button x:Name="SettingsButton"
+                    Style="{StaticResource PlatformButtonStyle}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource OnPrimary}"
+                    Text="⚙️"
+                    Clicked="OnSettingsClicked"
+                    CornerRadius="8" />
         </StackLayout>
     </StackLayout>
 </ContentView>

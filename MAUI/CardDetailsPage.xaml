@@ -3,37 +3,73 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CardBox"
              xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
-             x:Class="CardBox.CardDetailPage">
+             x:Class="CardBox.CardDetailPage"
+             BackgroundColor="{DynamicResource Background}">
 
     <Grid Padding="8" RowDefinitions="Auto, *, Auto" RowSpacing="10">
-        <Frame BorderColor="Gray" Padding="10" Grid.Row="0" CornerRadius="8" BackgroundColor="Transparent">
-            <Grid RowDefinitions="Auto, Auto, Auto, Auto">
-                <Label Text="{Binding CardName}" FontSize="28" FontAttributes="Bold" Grid.Row="0" />
-                <Label Text="{Binding CardNickname}" FontSize="20" Grid.Row="1" />
+        <Frame BorderColor="{DynamicResource InversePrimary}"
+               Padding="10"
+               Grid.Row="0"
+               CornerRadius="8"
+               BackgroundColor="{DynamicResource OnPrimary}">
+            <Grid RowDefinitions="Auto, Auto, Auto, Auto" RowSpacing="5">
+                <Label Text="{Binding CardName}"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       Grid.Row="0"
+                       TextColor="{DynamicResource OnSurface}" />
+                <Label Text="{Binding CardNickname}"
+                       FontSize="18"
+                       Grid.Row="1"
+                       TextColor="{DynamicResource OnSurfaceVariant}" />
                 <Grid Grid.Row="2" HorizontalOptions="Center">
-                    <Frame HeightRequest="200" WidthRequest="200" Padding="0" IsClippedToBounds="True" CornerRadius="10" BorderColor="Transparent" BackgroundColor="Transparent">
-                        <zxing:BarcodeGeneratorView
-                                            x:Name="barcodeImage"
-                                            Value="{Binding CardNumber}"
-                                            Format="{Binding BarcodeFormat}"
-                                            HeightRequest="200"
-                                            WidthRequest="200"
-                                            BackgroundColor="White"/>
+                    <Frame HeightRequest="250"
+                           WidthRequest="250"
+                           Padding="0"
+                           IsClippedToBounds="True"
+                           CornerRadius="10"
+                           BorderColor="Transparent"
+                           BackgroundColor="Transparent">
+                        <zxing:BarcodeGeneratorView x:Name="barcodeImage"
+                                                    Value="{Binding CardNumber}"
+                                                    Format="{Binding BarcodeFormat}"
+                                                    HeightRequest="250"
+                                                    WidthRequest="250"
+                                                    BackgroundColor="White"/>
                     </Frame>
                 </Grid>
-                <Label Text="{Binding CardNumber}" FontSize="20" HorizontalOptions="Center" Grid.Row="3" />
+                <Label Text="{Binding CardNumber}"
+                       FontSize="18"
+                       HorizontalOptions="Center"
+                       Grid.Row="3"
+                       TextColor="{DynamicResource OnSurfaceVariant}" />
             </Grid>
         </Frame>
 
-        <Frame BorderColor="Gray" Padding="8" Grid.Row="1" CornerRadius="8" BackgroundColor="Transparent">
-            <Grid RowDefinitions="Auto, Auto, *, Auto, Auto, Auto">
-                <Label Text="Nearby Locations" FontSize="20" Margin="0,0,0,10" Grid.Row="0" />
-                <ActivityIndicator x:Name="loadingProgressRing" IsRunning="False" IsVisible="False" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" Grid.Row="1" />
+        <Frame BorderColor="{DynamicResource InversePrimary}"
+               Padding="8"
+               Grid.Row="1"
+               CornerRadius="8"
+               BackgroundColor="{DynamicResource OnPrimary}">
+            <Grid RowDefinitions="Auto, Auto, *, Auto, Auto, Auto" RowSpacing="5">
+                <Label Text="Nearby Locations"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       Grid.Row="0"
+                       TextColor="{DynamicResource OnSurface}" />
+                <ActivityIndicator x:Name="loadingProgressRing"
+                                   IsRunning="False"
+                                   IsVisible="False"
+                                   WidthRequest="40"
+                                   HeightRequest="40"
+                                   HorizontalOptions="Center"
+                                   Grid.Row="1"
+                                   Color="{DynamicResource Primary}" />
                 <ScrollView Grid.Row="2">
-                    <CollectionView x:Name="locationsListView" SelectionMode="None" >
+                    <CollectionView x:Name="locationsListView" SelectionMode="None">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Grid RowSpacing="10">
+                                <Grid RowSpacing="5" Padding="2">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -43,25 +79,78 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Label Text="{Binding Name}" FontSize="16" Grid.Row="0" Grid.Column="0" VerticalOptions="Center"/>
-                                    <Label Text="{Binding Distance}" FontSize="14" Grid.Row="0" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center"/>
-                                    <Label Text="{Binding Address}" FontSize="14" Grid.Row="1" Grid.Column="0" />
-                                    <Button Clicked="NavigateToLocation_Click" Text="🗺️" Grid.Row="1" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" CornerRadius="4"/>
-                                    <BoxView HeightRequest="1" BackgroundColor="Gray" Margin="0,10,0,10" Grid.Row="2" Grid.ColumnSpan="2"/>
+                                    <Label Text="{Binding Name}"
+                                           FontSize="16"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           VerticalOptions="Center"
+                                           TextColor="{DynamicResource OnSurface}"/>
+                                    <Label Text="{Binding Distance}"
+                                           FontSize="14"
+                                           Grid.Row="0"
+                                           Grid.Column="1"
+                                           HorizontalOptions="End"
+                                           VerticalOptions="Center"
+                                           TextColor="{DynamicResource OnSurface}"/>
+                                    <Label Text="{Binding Address}"
+                                           FontSize="14"
+                                           Grid.Row="1"
+                                           Grid.Column="0"
+                                           TextColor="{DynamicResource OnSurface}" />
+                                    <Button Clicked="NavigateToLocation_Click"
+                                            Text="🗺️"
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center"
+                                            CornerRadius="4"
+                                            BackgroundColor="{DynamicResource Primary}"
+                                            TextColor="{DynamicResource OnPrimary}"/>
+                                    <BoxView HeightRequest="1"
+                                             BackgroundColor="{DynamicResource Outline}"
+                                             Grid.Row="2"
+                                             Grid.ColumnSpan="2"/>
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </ScrollView>
-                <Label x:Name="noLocationsLabel" Text="No nearby locations found." FontSize="16" IsVisible="False" HorizontalOptions="Center" Grid.Row="3"/>
-                <Label x:Name="locationErrorLabel" Text="Could not retrieve location." FontSize="16" IsVisible="False" HorizontalOptions="Center" Grid.Row="4"/>
-                <Label Text="Location data provided by © OpenStreetMap contributors and Nominatim." FontSize="12" Margin="0,0,0,0" HorizontalOptions="End" Grid.Row="5"/>
+                <Label x:Name="noLocationsLabel"
+                       Text="No nearby locations found."
+                       FontSize="16"
+                       IsVisible="False"
+                       HorizontalOptions="Center"
+                       Grid.Row="3"
+                       TextColor="{DynamicResource OnSurfaceVariant}"/>
+                <Label x:Name="locationErrorLabel"
+                       Text="Could not retrieve location."
+                       FontSize="16"
+                       IsVisible="False"
+                       HorizontalOptions="Center"
+                       Grid.Row="4"
+                       TextColor="{DynamicResource OnSurfaceVariant}"/>
+                <Label Text="Location data provided by © OpenStreetMap contributors and Nominatim."
+                       FontSize="10"
+                       HorizontalOptions="End"
+                       Grid.Row="5"
+                       TextColor="{DynamicResource OnSurfaceVariant}"/>
             </Grid>
         </Frame>
 
-        <Grid ColumnDefinitions="3*,*" VerticalOptions="End" Margin="0,0,0,0" Grid.Row="2">
-            <Button Text="Edit" Clicked="EditCard_Click" CornerRadius="4" Grid.Column="0" Margin="0,0,5,0"/>
-            <Button Text="Delete" Clicked="DeleteCard_Click" TextColor="Red" CornerRadius="4" Grid.Column="1"/>
+        <Grid ColumnDefinitions="3*,*" VerticalOptions="End" Margin="0,0,0,0" Grid.Row="2" ColumnSpacing="5">
+            <Button Text="Edit"
+                    Clicked="EditCard_Click"
+                    CornerRadius="4"
+                    Grid.Column="0"
+                    Margin="0,0,5,0"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource OnPrimary}"/>
+            <Button Text="Delete"
+                    Clicked="DeleteCard_Click"
+                    TextColor="{DynamicResource Error}"
+                    CornerRadius="4"
+                    Grid.Column="1"
+                    BackgroundColor="{DynamicResource ErrorContainer}"/>
         </Grid>
     </Grid>
 </ContentPage>

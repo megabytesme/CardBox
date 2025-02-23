@@ -3,28 +3,65 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CardBox"
              xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
-             x:Class="CardBox.AddCardPage">
+             x:Class="CardBox.AddCardPage"
+             BackgroundColor="{DynamicResource Background}">
 
-    <Grid>
-            <Frame Margin="10" Background="#05FFFFFF" >
-                <Grid>
-                <ScrollView>
-                    <StackLayout >
-                        <Label Text="Name of Card:" />
-                        <Entry x:Name="cardNameEntry" Placeholder="Enter name/company of card (required)" Margin="0,5,0,15"/>
-                        <Label Text="Knickname of Card:" />
-                        <Entry x:Name="cardNicknameEntry" Placeholder="Enter nickname of card (optional)" Margin="0,5,0,15"/>
-                        <Label Text="Card Number:" />
-                        <Entry x:Name="cardNumberEntry" Placeholder="Enter card number (required)" Margin="0,5,0,15" HorizontalOptions="FillAndExpand"/>
-
-                        <Picker x:Name="picker" Title="Card Display Type: (required)" Margin="0,5,0,50"/>
+    <Grid Padding="8">
+        <Frame Margin="5"
+               CornerRadius="8"
+               BorderColor="{DynamicResource InversePrimary}"
+               BackgroundColor="{DynamicResource OnPrimary}">
+            <Grid RowDefinitions="Auto, *, Auto" RowSpacing="10">
+                <ScrollView Grid.Row="0">
+                    <StackLayout Spacing="7">
+                        <Label Text="Name of Card:"
+                               FontSize="16"
+                               TextColor="{DynamicResource Primary}" />
+                        <Entry x:Name="cardNameEntry"
+                               Placeholder="Enter name/company of card (required)"
+                               Margin="0,0,0,15"
+                               TextColor="{DynamicResource Secondary}" />
+                        <Label Text="Nickname of Card:"
+                               FontSize="16"
+                               TextColor="{DynamicResource Primary}" />
+                        <Entry x:Name="cardNicknameEntry"
+                               Placeholder="Enter nickname of card (optional)"
+                               Margin="0,0,0,15"
+                               TextColor="{DynamicResource Secondary}" />
+                        <Label Text="Card Number:"
+                               FontSize="16"
+                               TextColor="{DynamicResource Primary}" />
+                        <Entry x:Name="cardNumberEntry"
+                               Placeholder="Enter card number (required)"
+                               Margin="0,0,0,15"
+                               HorizontalOptions="FillAndExpand"
+                               Keyboard="Numeric"  
+                               TextColor="{DynamicResource Secondary}" />
+                        <Label Text="Card Display Type:"
+                               FontSize="16"
+                               TextColor="{DynamicResource Primary}" />
+                        <Picker x:Name="picker"
+                                Title="Card Display Type: (required)"
+                                TextColor="{DynamicResource Secondary}"/>
                     </StackLayout>
                 </ScrollView>
-                <Grid ColumnDefinitions="3*,*" VerticalOptions="End">
-                        <Button Text="Add Card details with Camera" Clicked="ScanCard_Click" Grid.Column="0" Margin="0,0,5,0" />
-                        <Button Text="Save Card" Command="{Binding AddCard}" Grid.Column="1" />
-                    </Grid>
+
+                <Grid ColumnDefinitions="*,Auto"  Grid.Row="2"
+                      VerticalOptions="End"
+                      ColumnSpacing="8">
+                    <Button Text="Add Card details with Camera"
+                            Clicked="ScanCard_Click"
+                            Grid.Column="0"
+                            CornerRadius="4"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="{DynamicResource OnPrimary}" />
+                    <Button Text="Save Card"
+                            Command="{Binding AddCard}"
+                            Grid.Column="1"  CornerRadius="4"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="{DynamicResource OnPrimary}" />
                 </Grid>
-            </Frame>
+            </Grid>
+        </Frame>
     </Grid>
 </ContentPage>

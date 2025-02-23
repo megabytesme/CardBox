@@ -2,15 +2,47 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CardBox.SettingsPage"
-             xmlns:local="clr-namespace:CardBox">
+             xmlns:local="clr-namespace:CardBox"
+             BackgroundColor="{DynamicResource Background}">
 
-    <Grid Padding="20">
-        <VerticalStackLayout Spacing="10">
-            <Label Text="Settings" FontSize="28" FontAttributes="Bold" Margin="0,0,0,20"/>
-            <Button Text="Reset App" Clicked="ResetApp_Click" WidthRequest="200" HorizontalOptions="Center" TextColor="Red" CornerRadius="4"/>
-            <Button Text="Import Cards" Clicked="ImportCards_Click" WidthRequest="200" HorizontalOptions="Center" CornerRadius="4"/>
-            <Button Text="Export Cards" Clicked="ExportCards_Click" WidthRequest="200" HorizontalOptions="Center" CornerRadius="4"/>
-            <ActivityIndicator x:Name="progressRing" IsRunning="False" WidthRequest="50" HeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center" Margin="10"/>
+    <Grid Padding="16">
+        <VerticalStackLayout Spacing="16">
+            <Label Text="Settings"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="{DynamicResource OnBackground}"  HorizontalOptions="Center"/>
+
+            <Button Text="Reset App"
+                    Clicked="ResetApp_Click"
+                    WidthRequest="200"
+                    HorizontalOptions="Center"
+                    CornerRadius="4"
+                    BackgroundColor="{DynamicResource ErrorContainer}"  TextColor="{DynamicResource OnErrorContainer}"/>
+
+            <Button Text="Import Cards"
+                    Clicked="ImportCards_Click"
+                    WidthRequest="200"
+                    HorizontalOptions="Center"
+                    CornerRadius="4"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource OnPrimary}"/>
+
+            <Button Text="Export Cards"
+                    Clicked="ExportCards_Click"
+                    WidthRequest="200"
+                    HorizontalOptions="Center"
+                    CornerRadius="4"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource OnPrimary}"/>
+
+            <ActivityIndicator x:Name="progressRing"
+                               IsRunning="False"
+                               WidthRequest="40"
+                               HeightRequest="40"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="16"
+                               Color="{DynamicResource Primary}"/>
         </VerticalStackLayout>
     </Grid>
 </ContentPage>
