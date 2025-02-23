@@ -14,10 +14,7 @@
             <TextBox Header="Card Nickname" Text="{Binding CardNickname, Mode=TwoWay}" Margin="0,0,0,10"/>
             <TextBox Header="Card Number" Text="{Binding CardNumber, Mode=TwoWay}" Margin="0,0,0,10"/>
             <TextBlock Text="Card Display Type:" Margin="0,0,0,5" />
-            <ComboBox x:Name="displayPicker" SelectedItem="{Binding CardType, Mode=TwoWay}" Margin="0,0,0,15">
-                    <ComboBoxItem Content="QrCode" />
-                <ComboBoxItem Content="Bar128" />
-            </ComboBox>
+            <ComboBox x:Name="displayPicker" SelectedItem="{Binding CardType, Mode=TwoWay}" Margin="0,0,0,15"/>
             <Button Content="Save" Click="SaveCard_Click" Width="100" HorizontalAlignment="Right"/>
         </StackPanel>
     </Grid>
