@@ -3,10 +3,8 @@ using Windows.UI.Xaml.Controls;
 using Shared_Code;
 using System;
 using ZXing;
-using Windows.Media.Capture;
-using Windows.Storage;
-using Windows.Graphics.Imaging;
 using System.Linq;
+using Windows.UI.Xaml.Navigation;
 using System.Threading.Tasks;
 
 namespace _1709_UWP
@@ -21,6 +19,30 @@ namespace _1709_UWP
                                      .Where(dt => BarcodeHelper.IsSupportedDisplayType(dt))
                                      .ToList();
             displayPicker.ItemsSource = supportedTypes;
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                ScannerPage.ScannerResult result = ScannerPage.LastScanResult;
+
+                if (result != null)
+                {
+                    cardNumberEntry.Text = result.Text;
+                    if (result.Format != default(BarcodeFormat))
+                    {
+                        displayPicker.SelectedItem = result.Format;
+                    }
+                    else
+                    {
+                        await ShowErrorDialog("Unrecognized barcode format.");
+                    }
+                    ScannerPage.LastScanResult = null;
+                }
+            }
         }
 
         private async void OnAddCard(object sender, RoutedEventArgs e)
@@ -55,38 +77,9 @@ namespace _1709_UWP
             Frame.GoBack();
         }
 
-        private async void OnScanCard(object sender, RoutedEventArgs e)
+        private void OnScanCard(object sender, RoutedEventArgs e)
         {
-            var cameraCapture = new CameraCaptureUI
-            {
-                PhotoSettings =
-                {
-                    Format = CameraCaptureUIPhotoFormat.Jpeg,
-                    CroppedSizeInPixels = new Windows.Foundation.Size(200, 200)
-                }
-            };
-
-            var photo = await cameraCapture.CaptureFileAsync(CameraCaptureUIMode.Photo);
-            if (photo != null)
-            {
-                using (var stream = await photo.OpenAsync(FileAccessMode.Read))
-                {
-                    var bitmapDecoder = await BitmapDecoder.CreateAsync(stream);
-                    var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
-                    var barcodeReader = new BarcodeReader();
-                    var result = barcodeReader.Decode(bitmap);
-
-                    if (result != null)
-                    {
-                        cardNumberEntry.Text = result.Text;
-                        displayPicker.SelectedItem = result.BarcodeFormat;
-                    }
-                    else
-                    {
-                        await ShowErrorDialog("Failed to read barcode.");
-                    }
-                }
-            }
+            Frame.Navigate(typeof(ScannerPage));
         }
 
         private async Task ShowErrorDialog(string message)
