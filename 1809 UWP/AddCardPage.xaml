@@ -23,10 +23,7 @@
                     <TextBox x:Name="cardNumberEntry" PlaceholderText="Enter card number (required)" Margin="0,0,0,15" CornerRadius="4"/>
 
                     <TextBlock Text="Card Display Type:" Margin="0,0,0,5" />
-                    <ComboBox x:Name="displayPicker" Margin="0,0,0,15" CornerRadius="4">
-                        <ComboBoxItem Content="QrCode" />
-                        <ComboBoxItem Content="Bar128" />
-                    </ComboBox>
+                    <ComboBox x:Name="displayPicker" Margin="0,0,0,15" CornerRadius="4"/>
                 </StackPanel>
             </Border>
         </ScrollViewer>
