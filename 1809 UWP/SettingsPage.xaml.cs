@@ -16,6 +16,7 @@ using Windows.UI;
 using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
 using System.Linq;
+using Windows.UI.Xaml.Navigation;
 
 namespace _1809_UWP
 {
@@ -44,6 +45,34 @@ namespace _1809_UWP
                     TintOpacity = 0.6,
                     FallbackColor = Colors.Gray
                 };
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                ScannerPage.ScannerResult result = ScannerPage.LastScanResult;
+
+                if (result != null)
+                {
+                    ImportCardsFromBarcodeResult(result);
+                    ScannerPage.LastScanResult = null;
+                }
+            }
+        }
+
+        private async void ImportCardsFromBarcodeResult(ScannerPage.ScannerResult result)
+        {
+            if (result != null && !string.IsNullOrEmpty(result.Text))
+            {
+                await ImportCardsFromTextAsync(result.Text);
+            }
+            else
+            {
+                await ShowErrorDialog("Barcode scan failed or was cancelled.");
             }
         }
 
@@ -105,78 +134,7 @@ namespace _1809_UWP
             }
             else if (result == ContentDialogResult.Secondary)
             {
-                await ImportCardsFromBarcodeAsync();
-            }
-        }
-
-        private async Task ImportCardsFromBarcodeAsync()
-        {
-            var fileOpenPicker = new Windows.Storage.Pickers.FileOpenPicker();
-            fileOpenPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-            fileOpenPicker.FileTypeFilter.Add(".jpg");
-            fileOpenPicker.FileTypeFilter.Add(".jpeg");
-            fileOpenPicker.FileTypeFilter.Add(".png");
-
-            var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Enumeration.DeviceClass.VideoCapture);
-
-            if (devices.Count > 0)
-            {
-                var cameraCapture = new Windows.Media.Capture.CameraCaptureUI();
-                cameraCapture.PhotoSettings.Format = Windows.Media.Capture.CameraCaptureUIPhotoFormat.Jpeg;
-                cameraCapture.PhotoSettings.CroppedSizeInPixels = new Windows.Foundation.Size(200, 200);
-
-                var photo = await cameraCapture.CaptureFileAsync(Windows.Media.Capture.CameraCaptureUIMode.Photo);
-
-                if (photo != null)
-                {
-                    await ProcessBarcodePhotoAsync(photo);
-                }
-            }
-            else
-            {
-                var file = await fileOpenPicker.PickSingleFileAsync();
-                if (file != null)
-                {
-                    await ProcessBarcodeFileAsync(file);
-                }
-            }
-        }
-
-        private async Task ProcessBarcodePhotoAsync(Windows.Storage.StorageFile photo)
-        {
-            var stream = await photo.OpenAsync(Windows.Storage.FileAccessMode.Read);
-            var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
-            var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
-
-            var barcodeReader = new ZXing.BarcodeReader();
-            var scanResult = barcodeReader.Decode(bitmap);
-
-            if (scanResult != null)
-            {
-                await ImportCardsFromTextAsync(scanResult.Text);
-            }
-            else
-            {
-                await ShowErrorDialog("Failed to read barcode.");
-            }
-        }
-
-        private async Task ProcessBarcodeFileAsync(Windows.Storage.StorageFile file)
-        {
-            var stream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
-            var bitmapDecoder = await Windows.Graphics.Imaging.BitmapDecoder.CreateAsync(stream);
-            var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
-
-            var barcodeReader = new ZXing.BarcodeReader();
-            var scanResult = barcodeReader.Decode(bitmap);
-
-            if (scanResult != null)
-            {
-                await ImportCardsFromTextAsync(scanResult.Text);
-            }
-            else
-            {
-                await ShowErrorDialog("Failed to read barcode.");
+                Frame.Navigate(typeof(ScannerPage));
             }
         }
 
