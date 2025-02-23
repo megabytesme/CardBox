@@ -6,9 +6,7 @@ using Windows.UI.Xaml.Navigation;
 using Shared_Code;
 using ZXing;
 using ZXing.Common;
-using ZXing.Rendering;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 
@@ -69,11 +67,17 @@ namespace _1709_UWP
             }
         }
 
-        private WriteableBitmap GenerateBarcode(string value, DisplayType displayType)
+        public static WriteableBitmap GenerateBarcode(string value, BarcodeFormat displayType)
         {
+            if (!BarcodeHelper.IsSupportedDisplayType(displayType) ||
+                !BarcodeHelper.ValidateBarcode(value, displayType, out string errorMessage))
+            {
+                displayType = BarcodeFormat.QR_CODE;
+            }
+
             BarcodeWriterPixelData writer = new BarcodeWriterPixelData
             {
-                Format = displayType == DisplayType.Bar128 ? BarcodeFormat.CODE_128 : BarcodeFormat.QR_CODE,
+                Format = displayType,
                 Options = new EncodingOptions
                 {
                     Height = 200,

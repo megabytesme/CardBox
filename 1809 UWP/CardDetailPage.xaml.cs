@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
@@ -9,13 +8,10 @@ using Windows.UI.Xaml.Navigation;
 using Shared_Code;
 using ZXing;
 using ZXing.Common;
-using ZXing.Rendering;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation.Metadata;
 using Windows.UI;
-using Microsoft.UI.Xaml.Media;
 using Windows.Devices.Geolocation;
-using Windows.UI.Xaml.Media;
 
 namespace _1809_UWP
 {
@@ -93,11 +89,17 @@ namespace _1809_UWP
             }
         }
 
-        private WriteableBitmap GenerateBarcode(string value, DisplayType displayType)
+        public static WriteableBitmap GenerateBarcode(string value, BarcodeFormat displayType)
         {
+            if (!BarcodeHelper.IsSupportedDisplayType(displayType) ||
+                !BarcodeHelper.ValidateBarcode(value, displayType, out string errorMessage))
+            {
+                displayType = BarcodeFormat.QR_CODE;
+            }
+
             BarcodeWriterPixelData writer = new BarcodeWriterPixelData
             {
-                Format = displayType == DisplayType.Bar128 ? BarcodeFormat.CODE_128 : BarcodeFormat.QR_CODE,
+                Format = displayType,
                 Options = new EncodingOptions
                 {
                     Height = 200,
