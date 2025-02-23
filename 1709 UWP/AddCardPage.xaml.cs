@@ -6,7 +6,8 @@ using ZXing;
 using Windows.Media.Capture;
 using Windows.Storage;
 using Windows.Graphics.Imaging;
-using Windows.UI.Xaml.Media.Imaging;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace _1709_UWP
 {
@@ -15,6 +16,11 @@ namespace _1709_UWP
         public AddCardPage()
         {
             this.InitializeComponent();
+            var supportedTypes = Enum.GetValues(typeof(BarcodeFormat))
+                                     .Cast<BarcodeFormat>()
+                                     .Where(dt => BarcodeHelper.IsSupportedDisplayType(dt))
+                                     .ToList();
+            displayPicker.ItemsSource = supportedTypes;
         }
 
         private async void OnAddCard(object sender, RoutedEventArgs e)
@@ -22,29 +28,17 @@ namespace _1709_UWP
             string cardName = cardNameEntry.Text;
             string cardNickname = cardNicknameEntry.Text;
             string cardNumberText = cardNumberEntry.Text;
-            ComboBoxItem selectedDisplayTypeItem = displayPicker.SelectedItem as ComboBoxItem;
+            var selectedDisplayType = (BarcodeFormat)displayPicker.SelectedItem;
 
-            if (string.IsNullOrWhiteSpace(cardName) || string.IsNullOrWhiteSpace(cardNumberText) || selectedDisplayTypeItem == null)
+            if (string.IsNullOrWhiteSpace(cardName) || string.IsNullOrWhiteSpace(cardNumberText) || selectedDisplayType == default)
             {
-                var dialog = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = "Please fill all required fields.",
-                    CloseButtonText = "OK"
-                };
-                await dialog.ShowAsync();
+                await ShowErrorDialog("Please fill all required fields.");
                 return;
             }
 
-            if (!Enum.TryParse(selectedDisplayTypeItem.Content.ToString(), out DisplayType selectedDisplayType))
+            if (!BarcodeHelper.ValidateBarcode(cardNumberText, selectedDisplayType, out string errorMessage))
             {
-                var dialog = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = "Invalid display type selected.",
-                    CloseButtonText = "OK"
-                };
-                await dialog.ShowAsync();
+                await ShowErrorDialog($"Invalid display type: {errorMessage}");
                 return;
             }
 
@@ -63,42 +57,47 @@ namespace _1709_UWP
 
         private async void OnScanCard(object sender, RoutedEventArgs e)
         {
-            var cameraCapture = new CameraCaptureUI();
-            cameraCapture.PhotoSettings.Format = CameraCaptureUIPhotoFormat.Jpeg;
-            cameraCapture.PhotoSettings.CroppedSizeInPixels = new Windows.Foundation.Size(200, 200);
+            var cameraCapture = new CameraCaptureUI
+            {
+                PhotoSettings =
+                {
+                    Format = CameraCaptureUIPhotoFormat.Jpeg,
+                    CroppedSizeInPixels = new Windows.Foundation.Size(200, 200)
+                }
+            };
 
             var photo = await cameraCapture.CaptureFileAsync(CameraCaptureUIMode.Photo);
             if (photo != null)
             {
-                var stream = await photo.OpenAsync(FileAccessMode.Read);
-                var bitmapDecoder = await BitmapDecoder.CreateAsync(stream);
-                var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
-
-                var barcodeReader = new BarcodeReader();
-                var result = barcodeReader.Decode(bitmap);
-
-                if (result != null)
+                using (var stream = await photo.OpenAsync(FileAccessMode.Read))
                 {
-                    cardNumberEntry.Text = result.Text;
-                    if (result.BarcodeFormat == BarcodeFormat.QR_CODE)
+                    var bitmapDecoder = await BitmapDecoder.CreateAsync(stream);
+                    var bitmap = await bitmapDecoder.GetSoftwareBitmapAsync();
+                    var barcodeReader = new BarcodeReader();
+                    var result = barcodeReader.Decode(bitmap);
+
+                    if (result != null)
                     {
-                        displayPicker.SelectedItem = displayPicker.Items[0];
+                        cardNumberEntry.Text = result.Text;
+                        displayPicker.SelectedItem = result.BarcodeFormat;
                     }
-                    else if (result.BarcodeFormat == BarcodeFormat.CODE_128)
+                    else
                     {
-                        displayPicker.SelectedItem = displayPicker.Items[1];
+                        await ShowErrorDialog("Failed to read barcode.");
                     }
-                }
-                else
-                {
-                    await new ContentDialog
-                    {
-                        Title = "Error",
-                        Content = "Failed to read barcode.",
-                        CloseButtonText = "OK"
-                    }.ShowAsync();
                 }
             }
+        }
+
+        private async Task ShowErrorDialog(string message)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Error",
+                Content = message,
+                CloseButtonText = "OK"
+            };
+            await dialog.ShowAsync();
         }
     }
 }

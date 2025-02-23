@@ -7,6 +7,8 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Microsoft.UI.Xaml.Media;
+using System.Linq;
+using ZXing;
 
 namespace _1809_UWP
 {
@@ -15,7 +17,11 @@ namespace _1809_UWP
         public EditCardPage()
         {
             this.InitializeComponent();
-            ApplyBackdropOrAcrylic();
+            var supportedTypes = Enum.GetValues(typeof(BarcodeFormat))
+                                                 .Cast<BarcodeFormat>()
+                                                 .Where(dt => BarcodeHelper.IsSupportedDisplayType(dt))
+                                                 .ToList();
+            displayPicker.ItemsSource = supportedTypes; ApplyBackdropOrAcrylic();
         }
 
         private void ApplyBackdropOrAcrylic()
@@ -50,14 +56,32 @@ namespace _1809_UWP
         {
             if (DataContext is Card selectedCard)
             {
-                if (displayPicker.SelectedItem is ComboBoxItem selectedDisplayTypeItem &&
-                    Enum.TryParse(selectedDisplayTypeItem.Content.ToString(), out DisplayType selectedDisplayType))
+                if (displayPicker.SelectedItem is BarcodeFormat selectedDisplayType)
                 {
                     selectedCard.DisplayType = selectedDisplayType;
                 }
-                CardRepository.Instance.EditCard(selectedCard);
-                Frame.GoBack();
+
+                if (BarcodeHelper.ValidateBarcode(selectedCard.CardNumber, selectedCard.DisplayType, out string errorMessage))
+                {
+                    CardRepository.Instance.EditCard(selectedCard);
+                    Frame.GoBack();
+                }
+                else
+                {
+                    DisplayErrorMessage(errorMessage);
+                }
             }
+        }
+
+        private void DisplayErrorMessage(string message)
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Validation Error",
+                Content = message,
+                CloseButtonText = "OK"
+            };
+            _ = dialog.ShowAsync();
         }
     }
 }

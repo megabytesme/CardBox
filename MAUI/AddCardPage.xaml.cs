@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using Shared_Code;
 using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
+using ZXing;
+using BarcodeFormat = ZXing.BarcodeFormat;
 
 namespace CardBox
 {
@@ -23,7 +25,7 @@ namespace CardBox
 
         private void PopulatePicker()
         {
-            var displayTypes = Enum.GetNames(typeof(DisplayType)).ToList();
+            var displayTypes = Enum.GetNames(typeof(BarcodeFormat)).ToList();
             picker.ItemsSource = displayTypes;
         }
 
@@ -42,9 +44,15 @@ namespace CardBox
                 return;
             }
 
-            if (!Enum.TryParse(displayPicker.SelectedItem.ToString(), out Shared_Code.DisplayType selectedDisplayType))
+            if (!Enum.TryParse(displayPicker.SelectedItem.ToString(), out BarcodeFormat selectedDisplayType))
             {
                 await DisplayAlert("Error", "Invalid display type selected.", "OK");
+                return;
+            }
+
+            if (!BarcodeHelper.ValidateBarcode(cardNumber, selectedDisplayType, out string errorMessage))
+            {
+                await DisplayAlert("Error", $"Invalid barcode: {errorMessage}", "OK");
                 return;
             }
 
@@ -81,8 +89,7 @@ namespace CardBox
                 if (!string.IsNullOrEmpty(scannedValue))
                 {
                     cardNumberEntry.Text = scannedValue;
-                    DisplayType displayType;
-                    if (Enum.TryParse(barcodeFormat, out displayType))
+                    if (Enum.TryParse(barcodeFormat, out BarcodeFormat displayType))
                     {
                         picker.SelectedItem = displayType.ToString();
                     }
