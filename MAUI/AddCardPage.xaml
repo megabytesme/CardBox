@@ -2,29 +2,29 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CardBox"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
              x:Class="CardBox.AddCardPage">
 
     <Grid>
-        <ScrollView Grid.Column="1">
             <Frame Margin="10" Background="#05FFFFFF" >
-                <StackLayout >
-                    <Label Text="Name of Card:" />
-                    <Entry x:Name="cardNameEntry" Placeholder="Enter name of card (required)" Margin="0,5,0,15"/>
-                    <Label Text="Knickname of Card:" />
-                    <Entry x:Name="cardNicknameEntry" Placeholder="Enter nickname of card (optional)" Margin="0,5,0,15"/>
-                    <Label Text="Card Number:" />
-                    <Entry x:Name="cardNumberEntry" Placeholder="Enter card number (required)" Margin="0,5,0,15"/>
-                    <Picker x:Name="picker" Title="Card Display Type:" Margin="0,5,0,15">
-                        <Picker.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String>QrCode</x:String>
-                                <x:String>Bar128</x:String>
-                            </x:Array>
-                        </Picker.ItemsSource>
-                    </Picker>
-                    <Button Text="Add Card" Command="{Binding AddCard}" />
-                </StackLayout>
+                <Grid>
+                <ScrollView>
+                    <StackLayout >
+                        <Label Text="Name of Card:" />
+                        <Entry x:Name="cardNameEntry" Placeholder="Enter name/company of card (required)" Margin="0,5,0,15"/>
+                        <Label Text="Knickname of Card:" />
+                        <Entry x:Name="cardNicknameEntry" Placeholder="Enter nickname of card (optional)" Margin="0,5,0,15"/>
+                        <Label Text="Card Number:" />
+                        <Entry x:Name="cardNumberEntry" Placeholder="Enter card number (required)" Margin="0,5,0,15" HorizontalOptions="FillAndExpand"/>
+
+                        <Picker x:Name="picker" Title="Card Display Type: (required)" Margin="0,5,0,50"/>
+                    </StackLayout>
+                </ScrollView>
+                <Grid ColumnDefinitions="3*,*" VerticalOptions="End">
+                        <Button Text="Add Card details with Camera" Clicked="ScanCard_Click" Grid.Column="0" Margin="0,0,5,0" />
+                        <Button Text="Save Card" Command="{Binding AddCard}" Grid.Column="1" />
+                    </Grid>
+                </Grid>
             </Frame>
-        </ScrollView>
     </Grid>
 </ContentPage>
