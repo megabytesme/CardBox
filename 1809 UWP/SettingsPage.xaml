@@ -7,13 +7,44 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="20">
-        <StackPanel Spacing="10">
-            <TextBlock Text="Settings" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
-            <Button Content="Reset App" Click="ResetApp_Click" Width="200" HorizontalAlignment="Center" Foreground="Red" CornerRadius="4"/>
-            <Button Content="Import Cards" Click="ImportCards_Click" Width="200" HorizontalAlignment="Center" CornerRadius="4"/>
-            <Button Content="Export Cards" Click="ExportCards_Click" Width="200" HorizontalAlignment="Center" CornerRadius="4"/>
-            <ProgressRing x:Name="progressRing" IsActive="False" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
-        </StackPanel>
+    <Grid Padding="8">
+        <Border Margin="8"
+                CornerRadius="8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1">
+
+            <StackPanel Padding="16" Spacing="12" HorizontalAlignment="Center">
+                <TextBlock Text="Settings"
+                           FontSize="24"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,24"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           HorizontalAlignment="Center"/>
+                <Button Content="Reset App"
+                        Click="ResetApp_Click"
+                        Width="200"
+                        Foreground="Red"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"/>
+                <Button Content="Import Cards"
+                        Click="ImportCards_Click"
+                        Width="200"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"/>
+                <Button Content="Export Cards"
+                        Click="ExportCards_Click"
+                        Width="200"
+                        CornerRadius="4"
+                        HorizontalAlignment="Center"/>
+                <ProgressRing x:Name="progressRing"
+                              IsActive="False"
+                              Width="40"
+                              Height="40"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Margin="24,12,24,0"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

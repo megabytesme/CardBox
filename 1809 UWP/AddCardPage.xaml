@@ -9,27 +9,59 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <ScrollViewer Margin="10">
-            <Border Padding="10" >
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Name of Card:" Margin="0,0,0,5" />
-                    <TextBox x:Name="cardNameEntry" PlaceholderText="Enter name of card (required)" Margin="0,0,0,15" CornerRadius="4"/>
+    <Grid Padding="8">
+        <Border Margin="8"
+                CornerRadius="8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1">
+            <Grid>
+                <ScrollViewer>
+                    <StackPanel Padding="16" Spacing="12">
+                        <TextBlock Text="Name of Card:"
+                                   Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBox x:Name="cardNameEntry"
+                                 PlaceholderText="Enter name/company of card (required)"
+                                 Margin="0,0,0,12"
+                                 CornerRadius="4"/>
 
-                    <TextBlock Text="Nickname of Card:" Margin="0,0,0,5" />
-                    <TextBox x:Name="cardNicknameEntry" PlaceholderText="Enter nickname of card (optional)" Margin="0,0,0,15" CornerRadius="4"/>
+                        <TextBlock Text="Nickname of Card:"
+                                   Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBox x:Name="cardNicknameEntry"
+                                 PlaceholderText="Enter nickname of card (optional)"
+                                 Margin="0,0,0,12"
+                                 CornerRadius="4"/>
 
-                    <TextBlock Text="Card Number:" Margin="0,0,0,5" />
-                    <TextBox x:Name="cardNumberEntry" PlaceholderText="Enter card number (required)" Margin="0,0,0,15" CornerRadius="4"/>
+                        <TextBlock Text="Card Number:"
+                                   Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBox x:Name="cardNumberEntry"
+                                 PlaceholderText="Enter card number (required)"
+                                 Margin="0,0,0,12"
+                                 CornerRadius="4"
+                                 HorizontalAlignment="Stretch"/>
 
-                    <TextBlock Text="Card Display Type:" Margin="0,0,0,5" />
-                    <ComboBox x:Name="displayPicker" Margin="0,0,0,15" CornerRadius="4"/>
+                        <TextBlock Text="Card Display Type:"
+                                   Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <ComboBox x:Name="displayPicker"
+                                  PlaceholderText="Select Card Type"
+                                  Margin="0,0,0,12"
+                                  CornerRadius="4"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Padding="0,0,0,24"
+                            Spacing="16">
+                    <Button Content="Scan Card"
+                            Click="OnScanCard"
+                            CornerRadius="4"/>
+                    <Button Content="Add Card"
+                            Click="OnAddCard"
+                            CornerRadius="4"/>
                 </StackPanel>
-            </Border>
-        </ScrollViewer>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Spacing="10">
-            <Button Content="Add Card" Click="OnAddCard" CornerRadius="4"/>
-            <Button Content="Scan Card" Click="OnScanCard" CornerRadius="4"/>
-        </StackPanel>
+            </Grid>
+        </Border>
     </Grid>
 </Page>
