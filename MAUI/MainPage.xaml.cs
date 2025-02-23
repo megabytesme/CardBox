@@ -18,7 +18,7 @@ namespace CardBox
 
         private async void OnViewCard(Card selectedCard)
         {
-            await Navigation.PushAsync(new CardDetailPage(selectedCard));
+            await Navigation.PushAsync(new CardDetailPage(selectedCard, CardRepository.Instance));
         }
     }
 }

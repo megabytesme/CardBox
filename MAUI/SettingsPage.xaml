@@ -3,12 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CardBox.SettingsPage"
              xmlns:local="clr-namespace:CardBox">
-    
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-    </Grid>
 
+    <Grid Padding="20">
+        <VerticalStackLayout Spacing="10">
+            <Label Text="Settings" FontSize="28" FontAttributes="Bold" Margin="0,0,0,20"/>
+            <Button Text="Reset App" Clicked="ResetApp_Click" WidthRequest="200" HorizontalOptions="Center" TextColor="Red" CornerRadius="4"/>
+            <Button Text="Import Cards" Clicked="ImportCards_Click" WidthRequest="200" HorizontalOptions="Center" CornerRadius="4"/>
+            <Button Text="Export Cards" Clicked="ExportCards_Click" WidthRequest="200" HorizontalOptions="Center" CornerRadius="4"/>
+            <ActivityIndicator x:Name="progressRing" IsRunning="False" WidthRequest="50" HeightRequest="50" HorizontalOptions="Center" VerticalOptions="Center" Margin="10"/>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>
