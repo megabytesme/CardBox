@@ -70,7 +70,6 @@ namespace _1709_UWP
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active
-                Xamarin.Essentials.Platform.OnLaunched(e);
                 Window.Current.Activate();
             }
         }

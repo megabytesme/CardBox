@@ -119,7 +119,7 @@ public static class LocationService
                 string mergedAddress = null;
                 if (nearbyLocations.Any() && !string.IsNullOrEmpty(nearbyLocations[0].Address))
                 {
-                    mergedAddress = nearbyLocations[0].Address.Split('\n', StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+                    mergedAddress = nearbyLocations[0].Address.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
                 }
 
                 mergedLocations.Add(new Location
