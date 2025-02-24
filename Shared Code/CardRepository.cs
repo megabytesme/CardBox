@@ -30,7 +30,7 @@ namespace Shared_Code
             }
         }
 
-        private void LoadCards()
+        public void LoadCards()
         {
             var cards = _database.Table<Card>().ToList();
             Cards = new ObservableCollection<Card>(cards);
