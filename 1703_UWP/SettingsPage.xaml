@@ -11,9 +11,9 @@
         <StackPanel>
             <TextBlock Text="Settings" FontSize="28" FontWeight="Bold" Margin="0,0,0,20" Foreground="White"/>
             <Button Content="Reset App" Click="ResetApp_Click" Width="200" HorizontalAlignment="Center" Foreground="Red"/>
-            <Button Content="Import Cards" Click="ImportCards_Click" Width="200" HorizontalAlignment="Center"/>
+            <Button Content="Import Cards" Click="ImportCards_Click" Width="200" HorizontalAlignment="Center" Margin="0,10"/>
             <Button Content="Export Cards" Click="ExportCards_Click" Width="200" HorizontalAlignment="Center"/>
-            <Button Content="About" Click="AboutButton_Click" Width="200" HorizontalAlignment="Center"/>
+            <Button Content="About" Click="AboutButton_Click" Width="200" HorizontalAlignment="Center" Margin="0,10"/>
             <ProgressRing x:Name="progressRing" IsActive="False" Width="50" Height="50" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
         </StackPanel>
     </Grid>

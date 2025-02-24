@@ -45,12 +45,6 @@ namespace _1703_UWP
                     case "HomePage":
                         ContentFrame.Navigate(typeof(HomePage));
                         break;
-                    case "AddCardPage":
-                        ContentFrame.Navigate(typeof(AddCardPage));
-                        break;
-                    case "SettingsPage": // If you want to add a settings page later
-                        ContentFrame.Navigate(typeof(SettingsPage));
-                        break;
                 }
             }
         }
@@ -65,7 +59,7 @@ namespace _1703_UWP
             }
 
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = ContentFrame.CanGoBack ?
-              AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+                AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
 
             if (e.SourcePageType == typeof(HomePage))
             {
@@ -102,7 +96,7 @@ namespace _1703_UWP
             {
                 var query = sender.Text.ToLower();
                 var filteredList = Cards.Where(card => card.CardName.ToLower().Contains(query) ||
-                                   card.CardNickname.ToLower().Contains(query)).ToList();
+                                                        card.CardNickname.ToLower().Contains(query)).ToList();
 
                 filteredCards.Clear();
                 foreach (var card in filteredList)

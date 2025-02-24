@@ -9,7 +9,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ScrollViewer Margin="10,10,10,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" Margin="10,10,10,10">
             <StackPanel>
                 <ItemsControl x:Name="CardsItemsControl" ItemsSource="{x:Bind FilteredCards}">
                     <ItemsControl.ItemTemplate>
@@ -33,5 +38,12 @@
                 <Button x:Name="AddCardButton" Content="Add Card" Click="AddCardButton_Click" Visibility="Collapsed" HorizontalAlignment="Center" Margin="10"/>
             </StackPanel>
         </ScrollViewer>
+
+        <CommandBar Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <CommandBar.PrimaryCommands>
+                <AppBarButton x:Name="HomePageAddCardButton" Label="Add Card" Icon="Add" Click="NavigationButton_Click" Tag="AddCardPage"/>
+                <AppBarButton x:Name="HomePageSettingsButton" Label="Settings" Icon="Setting" Click="NavigationButton_Click" Tag="SettingsPage"/>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
     </Grid>
 </Page>

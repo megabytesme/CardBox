@@ -7,6 +7,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
 using System.Linq;
+
 namespace _1703_UWP
 {
     public sealed partial class HomePage : Page
@@ -60,6 +61,22 @@ namespace _1703_UWP
                 FilteredCards = filteredCards;
             }
             UpdateNoCardsUI();
+        }
+
+        private void NavigationButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is AppBarButton button)
+            {
+                switch (button.Tag?.ToString())
+                {
+                    case "AddCardPage":
+                        Frame.Navigate(typeof(AddCardPage));
+                        break;
+                    case "SettingsPage":
+                        Frame.Navigate(typeof(SettingsPage));
+                        break;
+                }
+            }
         }
     }
 }

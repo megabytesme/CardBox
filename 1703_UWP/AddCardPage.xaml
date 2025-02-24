@@ -27,8 +27,8 @@
                 </StackPanel>
             </Border>
         </ScrollViewer>
-        <StackPanel x:Name="buttonStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-            <Button Content="Scan Card" Click="OnScanCard" />
+        <StackPanel x:Name="buttonStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
+            <Button Content="Scan Card" Click="OnScanCard" Margin="0,0,10,0"/>
             <Button Content="Add Card" Click="OnAddCard" />
         </StackPanel>
     </Grid>

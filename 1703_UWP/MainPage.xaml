@@ -21,8 +21,7 @@
             </Grid.ColumnDefinitions>
 
             <AppBarButton x:Name="HomeButton" Grid.Column="0" Label="Home" Icon="Home" Click="NavigationButton_Click" Tag="HomePage"/>
-            <AppBarButton x:Name="AddCardButton" Grid.Column="1" Label="Add Card" Icon="Add" Click="NavigationButton_Click" Tag="AddCardPage"/>
-
+            <AppBarButton Grid.Column="1" Visibility="Collapsed"/>
             <AutoSuggestBox x:Name="SearchBox"
                             Grid.Column="2"
                             QueryIcon="Find"
@@ -36,6 +35,6 @@
                             Margin="0,0,10,0"/>
         </Grid>
 
-        <Frame Grid.Row="1" Margin="10,0,0,0" x:Name="ContentFrame" />
+        <Frame Grid.Row="1" x:Name="ContentFrame" />
     </Grid>
 </Page>
