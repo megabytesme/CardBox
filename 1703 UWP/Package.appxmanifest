@@ -9,7 +9,7 @@
   <Identity
     Name="MegaBytesMe.CardBoxTool"
     Publisher="CN=F0BC24FD-E28E-4D47-BEEA-3B6CF444653E"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="1217fe01-3d8f-48d7-a18f-1ded7c54738f" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -20,7 +20,7 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.16299.0" MaxVersionTested="10.0.16299.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.15254.1" MaxVersionTested="10.0.15254.603" />
   </Dependencies>
 
   <Resources>
