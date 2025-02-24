@@ -9,7 +9,7 @@
   <Identity
     Name="MegaBytesMe.CardBoxTool"
     Publisher="CN=F0BC24FD-E28E-4D47-BEEA-3B6CF444653E"
-    Version="0.0.1.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="b25728a5-dc75-4906-af66-d62dcfc84f9a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
