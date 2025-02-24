@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Documents;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace _1703_UWP
 {
@@ -136,7 +137,7 @@ namespace _1703_UWP
                     if (invalidCards.Count > 0)
                     {
                         string invalidCardsMessage = "The following cards are invalid and have not been added:\n" +
-                                                     string.Join("\n", invalidCards.Select(c => c.CardName));
+                                      string.Join("\n", invalidCards.Select(c => c.CardName));
                         await ShowWarningDialog(invalidCardsMessage);
                     }
                     else
@@ -191,10 +192,24 @@ namespace _1703_UWP
             {
                 Title = "Exported QR Code",
                 Content = new ScrollViewer { Content = image },
-                CloseButtonText = "OK"
+                PrimaryButtonText = "Copy as Text",
+                CloseButtonText = "OK",
+                DefaultButton = ContentDialogButton.Close
             };
 
+            dialog.PrimaryButtonClick += async (_s, _e) =>
+            {
+                CopyExportedTextToClipboard(exportedText);
+            };
+
             await dialog.ShowAsync();
+        }
+
+        private void CopyExportedTextToClipboard(string exportedText)
+        {
+            DataPackage dataPackage = new DataPackage();
+            dataPackage.SetText(exportedText);
+            Clipboard.SetContent(dataPackage);
         }
 
         private async Task ShowErrorDialog(string message)
@@ -260,47 +275,46 @@ namespace _1703_UWP
                             new Run() { Text = "Source code available on " },
                             new Hyperlink()
                             {
-                                NavigateUri = new Uri("https://github.com/megabytesme/CardBox"),
-                                Inlines = { new Run() { Text = "GitHub" } }
+                            NavigateUri = new Uri("https://github.com/megabytesme/CardBox"),
+                            Inlines = { new Run() { Text = "GitHub" } }
                             },
                             new LineBreak(),
                             new Run() { Text = "Anything wrong? Let us know: " },
                             new Hyperlink()
                             {
-                                NavigateUri = new Uri("https://github.com/megabytesme/CardBox/issues"),
-                                Inlines = { new Run() { Text = "Support" } }
+                            NavigateUri = new Uri("https://github.com/megabytesme/CardBox/issues"),
+                            Inlines = { new Run() { Text = "Support" } }
                             },
                             new LineBreak(),
                             new Run() { Text = "Privacy Policy: " },
                             new Hyperlink()
                             {
-                                NavigateUri = new Uri("https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md"),
-                                Inlines = { new Run() { Text = "Privacy Policy" } }
+                            NavigateUri = new Uri("https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md"),
+                            Inlines = { new Run() { Text = "Privacy Policy" } }
                             },
                             new LineBreak(),
                             new Run() { Text = "Like what you see? View my " },
                             new Hyperlink()
                             {
-                                NavigateUri = new Uri("https://github.com/megabytesme"),
-                                Inlines = { new Run() { Text = "GitHub" } }
+                            NavigateUri = new Uri("https://github.com/megabytesme"),
+                            Inlines = { new Run() { Text = "GitHub" } }
                             },
                             new Run() { Text = " and maybe my " },
                             new Hyperlink()
                             {
-                                NavigateUri = new Uri("https://apps.microsoft.com/search?query=megabytesme"),
-                                Inlines = { new Run() { Text = "Other Apps" } }
+                            NavigateUri = new Uri("https://apps.microsoft.com/search?query=megabytesme"),
+                            Inlines = { new Run() { Text = "Other Apps" } }
                             },
                             new LineBreak(),
                             new Run() { Text = " "},
                             new LineBreak(),
                             new Run() { Text = "CardBox is designed to help you manage your loyalty cards effortlessly." }
                         },
-                        TextWrapping = TextWrapping.Wrap
+                    TextWrapping = TextWrapping.Wrap
                     }
                 },
                 CloseButtonText = "OK"
-            };
-
+            };
             await dialog.ShowAsync();
         }
     }

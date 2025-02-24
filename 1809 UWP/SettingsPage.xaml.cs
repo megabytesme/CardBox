@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Documents;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace _1809_UWP
 {
@@ -214,10 +215,24 @@ namespace _1809_UWP
             {
                 Title = "Exported QR Code",
                 Content = new ScrollViewer { Content = image },
-                CloseButtonText = "OK"
+                PrimaryButtonText = "Copy as Text",
+                CloseButtonText = "OK",
+                DefaultButton = ContentDialogButton.Close
+            };
+
+            dialog.PrimaryButtonClick += async (_s, _e) =>
+            {
+                CopyExportedTextToClipboard(exportedText);
             };
 
             await dialog.ShowAsync();
+        }
+
+        private void CopyExportedTextToClipboard(string exportedText)
+        {
+            DataPackage dataPackage = new DataPackage();
+            dataPackage.SetText(exportedText);
+            Clipboard.SetContent(dataPackage);
         }
 
         private async Task ShowErrorDialog(string message)
