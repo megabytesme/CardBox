@@ -8,7 +8,7 @@ CardBox is an opensource cross-platform app which is designed to effortlessly pr
 - **Cross-platform support:** Enjoy access to your loyalty cards on whichever device or OS you use!
 
 ## Download
-Coming soon!
+<a href="https://apps.microsoft.com/detail/9NRC7F9MD2JW"><img src="https://get.microsoft.com/images/en-us%20dark.svg" width="200"/>
 
 ## Build Guide
 
