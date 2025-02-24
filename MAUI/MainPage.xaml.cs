@@ -16,6 +16,27 @@ namespace CardBox
             BindingContext = this;
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            RefreshCardList();
+        }
+
+        private void RefreshCardList()
+        {
+            CardRepository.Instance.LoadCards();
+            FilteredCards.Clear();
+            foreach (var card in Cards)
+            {
+                FilteredCards.Add(card);
+            }
+            SearchBar searchBarControl = this.FindByName<SearchBar>("searchBar");
+            if (searchBarControl != null)
+            {
+                OnSearchTextChanged(searchBarControl, new TextChangedEventArgs(null, searchBarControl.Text));
+            }
+        }
+
         private Command<Card> _viewCardCommand;
         public Command<Card> ViewCardCommand => _viewCardCommand ?? (_viewCardCommand = new Command<Card>(OnViewCard));
 
