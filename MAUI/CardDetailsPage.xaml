@@ -30,12 +30,9 @@
                            CornerRadius="10"
                            BorderColor="Transparent"
                            BackgroundColor="Transparent">
-                        <zxing:BarcodeGeneratorView x:Name="barcodeImage"
-                                                    Value="{Binding CardNumber}"
-                                                    Format="{Binding BarcodeFormat}"
-                                                    HeightRequest="250"
-                                                    WidthRequest="250"
-                                                    BackgroundColor="White"/>
+                        <Image x:Name="barcodeImage"
+                                       Aspect="Fill"  HeightRequest="180"
+                                       WidthRequest="180"/>
                     </Frame>
                 </Grid>
                 <Label Text="{Binding CardNumber}"

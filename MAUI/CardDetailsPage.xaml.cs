@@ -1,8 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
 using Shared_Code;
-using ZXing.Net.Maui;
-using Microsoft.Maui.Devices.Sensors;
-using Microsoft.Maui.ApplicationModel;
+using SkiaSharp;
 
 namespace CardBox
 {
@@ -15,34 +14,47 @@ namespace CardBox
             InitializeComponent();
             BindingContext = selectedCard;
             _cardRepository = cardRepository;
+            InitializePage(selectedCard);
+        }
 
-            barcodeImage.Format = selectedCard.DisplayType switch
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            GenerateBarcode();
+        }
+
+        private void GenerateBarcode()
+        {
+            if (barcodeImage == null || BindingContext is not Card selectedCard)
+                return;
+
+            ZXing.BarcodeWriterPixelData writer = new ZXing.BarcodeWriterPixelData
             {
-                DisplayType.Code128 => BarcodeFormat.Code128,
-                DisplayType.QrCode => BarcodeFormat.QrCode,
-                DisplayType.Aztec => BarcodeFormat.Aztec,
-                DisplayType.Codabar => BarcodeFormat.Codabar,
-                DisplayType.Code39 => BarcodeFormat.Code39,
-                DisplayType.Code93 => BarcodeFormat.Code93,
-                DisplayType.DataMatrix => BarcodeFormat.DataMatrix,
-                DisplayType.Ean8 => BarcodeFormat.Ean8,
-                DisplayType.Ean13 => BarcodeFormat.Ean13,
-                DisplayType.Itf => BarcodeFormat.Itf,
-                DisplayType.MaxiCode => BarcodeFormat.MaxiCode,
-                DisplayType.Pdf417 => BarcodeFormat.Pdf417,
-                DisplayType.Rss14 => BarcodeFormat.Rss14,
-                DisplayType.RssExpanded => BarcodeFormat.RssExpanded,
-                DisplayType.UpcA => BarcodeFormat.UpcA,
-                DisplayType.UpcE => BarcodeFormat.UpcE,
-                DisplayType.UpcEanExtension => BarcodeFormat.UpcEanExtension,
-                DisplayType.Msi => BarcodeFormat.Msi,
-                DisplayType.Plessey => BarcodeFormat.Plessey,
-                DisplayType.Imb => BarcodeFormat.Imb,
-                DisplayType.PharmaCode => BarcodeFormat.PharmaCode,
-                _ => BarcodeFormat.QrCode
+                Format = selectedCard.DisplayType,
+                Options = new ZXing.Common.EncodingOptions
+                {
+                    Height = 200,
+                    Width = 200,
+                    Margin = 1
+                }
             };
 
-            InitializePage(selectedCard);
+            var pixelData = writer.Write(selectedCard.CardNumber);
+            SKImageInfo imageInfo = new SKImageInfo(pixelData.Width, pixelData.Height, SKColorType.Rgba8888);
+
+            using var bitmap = new SKBitmap(imageInfo);
+            IntPtr pixelPtr = Marshal.UnsafeAddrOfPinnedArrayElement(pixelData.Pixels, 0);
+            bitmap.InstallPixels(imageInfo, pixelPtr);
+
+            using (var image = SKImage.FromBitmap(bitmap))
+            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+            {
+                var stream = new MemoryStream();
+                data.SaveTo(stream);
+                stream.Seek(0, SeekOrigin.Begin);
+
+                barcodeImage.Source = ImageSource.FromStream(() => new MemoryStream(stream.ToArray()));
+            }
         }
 
         private async void InitializePage(Card selectedCard)
@@ -114,7 +126,7 @@ namespace CardBox
         {
             if (BindingContext is Card selectedCard)
             {
-                await Shell.Current.GoToAsync($"editCard?CardId={selectedCard.Id}");
+                await Navigation.PushAsync(new EditCardPage(selectedCard));
             }
         }
 
@@ -129,7 +141,7 @@ namespace CardBox
                     try
                     {
                         _cardRepository.DeleteCard(selectedCard);
-                        await Shell.Current.GoToAsync("..");
+                        await Navigation.PopAsync();
                     }
                     catch (Exception ex)
                     {
