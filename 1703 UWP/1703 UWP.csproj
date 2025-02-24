@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{7C11D84E-97C6-4DC2-80CF-E45C9369642D}</ProjectGuid>
+    <ProjectGuid>{5396D943-A4D3-44C8-A4DA-5E526910AD6B}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>_1703_UWP</RootNamespace>
