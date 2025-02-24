@@ -1,8 +1,7 @@
 # CardBox
-![Screenshot 2025-02-21 035805](https://github.com/user-attachments/assets/155f6660-3396-4705-b0e3-af225b7dba41)
+![Screenshot 2025-02-24 211528](https://github.com/user-attachments/assets/7bb321d0-d03e-4fe8-9f25-5a44fe72acf2)
 
-
-CardBox is an app which is designed to effortlessly present your loyalty cards on all your devices.
+CardBox is an opensource cross-platform app which is designed to effortlessly present your loyalty cards on all your devices.
 
 ## Features
 
@@ -30,7 +29,6 @@ Coming soon!
 ### Running the Application
 
 1. Start the application by pressing `F5` or by selecting `Debug > Start Debugging`.
-2. Drag and drop a file into the application to upload.
 
 ### Usage
 
@@ -42,7 +40,7 @@ Coming soon!
 
 - `1703 UWP`: UWP app implementation which supports devices on Windows 1703 and above (looking at you W10M) - Uses UWP WinUI. Recommended for Windows 10 Mobile users.
 - `1809 UWP`: UWP app implementation which supports devices on Windows 1809 and above (Includes 10X!) - Uses WinUI 2. Recommended for all Windows device users.
-- `MAUI`: MAUI app implementation which supports devices on Windows 1809 and above (Buggy due to Xzing.Net.MAUI library on Windows), Android, iOS and Mac - Recommended for non-Windows platform users.
+- `MAUI`: MAUI app implementation which supports devices on Windows 1809 and above (Buggy due to Xzing.Net.MAUI library on Windows), Android, iOS and Mac - Recommended for non-Windows platform users. Currently using Material You design principles.
 - `Shared Code`: Project which holds the code shared by all projects.
 - `App Assets`: Folder which holds the assets used by all projects when publishing to App Stores.
 
