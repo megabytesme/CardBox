@@ -49,7 +49,7 @@ H4sIAAAAAAAAA22Sy27DIBREf8ViHUvG4Fd3GBMpUt06iSNFrbqgCYuq6UOOF2mr/nuvbQhgdccd6Qwz
 
 - `1703 UWP`: UWP app implementation which supports devices on Windows 1703 and above (looking at you W10M) - Uses UWP WinUI. Recommended for Windows 10 Mobile users.
 - `1809 UWP`: UWP app implementation which supports devices on Windows 1809 and above (Includes 10X!) - Uses WinUI 2. Recommended for all Windows device users.
-- `MAUI`: MAUI app implementation which supports devices on Windows 1809 and above (Buggy due to Xzing.Net.MAUI library on Windows), Android, iOS and Mac - Recommended for non-Windows platform users. Currently using Material You design principles.
+- `MAUI`: MAUI app implementation which supports devices on Windows 1809 and above, Android, iOS and Mac - Recommended for Android/iOS users (Also Windows users, if you prefer "Material You" over "Fluent design").
 - `Shared Code`: Project which holds the code shared by all projects.
 - `App Assets`: Folder which holds the assets used by all projects when publishing to App Stores.
 
