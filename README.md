@@ -36,6 +36,15 @@ CardBox is an opensource cross-platform app which is designed to effortlessly pr
 2. **Fill in the details:** Fill in all the applicable card details.
 3. **View your cards:** View all the cards in the main window.
 
+### Test Import Data - Every Barcode Type as a Card
+1. **Go to Settings:** Press the ⚙️ icon to enter the settings.
+2. **Select Import Cards:** Select the Import Cards button.
+3. **Select Paste Text:** In the dialog box, select Paste Text.
+4. **Copy and Paste** Enter the import card code below, then press enter.
+```sh
+H4sIAAAAAAAAA22Sy27DIBREf8ViHUvG4Fd3GBMpUt06iSNFrbqgCYuq6UOOF2mr/nuvbQhgdccd6QwzFx5/0Du6Qey7V4eAy+6IFujVCHA+DOeHVvBwy+rmVoQVaxnoPegY/S4mnH8c5bPsXAMtGQscE5qUGoxdUAWkmIGKFJrj95UgRSj24+Uapz6O43zOg+QYwCQu8u3zpEzw9OpQyV4Gtey7l4trMsiTqn2qOoQKrOQ0SbULsTUEuwu9ECCYBGPzNIs0lVKPwmSGYeJzeRFNbcbgcDL0ql26KIwz0Cw7sW2bahlQnLkcSKBodBrMU7di35qLo9jmXm+CcfGOy3ozKNoFBtj6Px8mjqjNv2t4yFwPEJh2iGz55PpmJLcR6u3KRWH0yhuG4Cizr9Sc1Pmsvrz2k2R+KStLzsHC5E1jTOHSpz+SAOWRJgMAAA==
+```
+
 ## Folder Structure
 
 - `1703 UWP`: UWP app implementation which supports devices on Windows 1703 and above (looking at you W10M) - Uses UWP WinUI. Recommended for Windows 10 Mobile users.
