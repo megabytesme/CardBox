@@ -25,8 +25,11 @@ namespace CardBox
 
         private void PopulatePicker()
         {
-            var displayTypes = Enum.GetNames(typeof(BarcodeFormat)).ToList();
-            picker.ItemsSource = displayTypes;
+            var supportedTypes = Enum.GetValues(typeof(BarcodeFormat))
+             .Cast<BarcodeFormat>()
+             .Where(dt => BarcodeHelper.IsSupportedDisplayType(dt))
+             .ToList();
+            picker.ItemsSource = supportedTypes;
         }
 
         public Command AddCard => new Command(OnAddCard);

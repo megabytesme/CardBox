@@ -41,7 +41,6 @@
                                FontSize="16"
                                TextColor="{DynamicResource Primary}" />
                         <Picker x:Name="picker"
-                                Title="Card Display Type: (required)"
                                 TextColor="{DynamicResource Secondary}"/>
                     </StackLayout>
                 </ScrollView>
