@@ -28,7 +28,7 @@
                 ItemsSource="{Binding FilteredCards}"
                 Grid.Column="1"
                 Grid.Row="1"
-                Margin="10"
+                Margin="10,0,10,10"
                 IsVisible="True">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
