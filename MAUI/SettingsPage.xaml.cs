@@ -3,10 +3,8 @@ using ZXing.Net.Maui;
 using ZXing.Common;
 using BarcodeFormat = ZXing.Net.Maui.BarcodeFormat;
 using ZXing.Net.Maui.Controls;
-using ZXing;
 using SkiaSharp;
 using ZXing.SkiaSharp;
-using Microsoft.Maui.Controls;
 
 namespace CardBox
 {
@@ -336,34 +334,116 @@ namespace CardBox
 
             await Navigation.PushModalAsync(qrCodeDialog);
         }
-    
 
-
-    private async void AboutButton_Click(object sender, EventArgs e)
+        private async void AboutButton_Click(object sender, EventArgs e)
         {
-            string aboutContent = 
-            @"CardBox Tool
-Version 3.0.2.0 (MAUI)
-Copyright © 2025 MegaBytesMe
+            var aboutDialog = new ContentPage();
+            var grid = new Grid
+            {
+                RowDefinitions = new RowDefinitionCollection
+            {
+                new RowDefinition(GridLength.Auto),
+                new RowDefinition(GridLength.Star),
+                new RowDefinition(GridLength.Auto)
+            },
+                Padding = new Thickness(15),
+                BackgroundColor = AppInfo.RequestedTheme == AppTheme.Dark
+                    ? Color.FromArgb("#FF202020")
+                    : Colors.White
+            };
 
-Source code available on GitHub:
-https://github.com/megabytesme/CardBox
+            var titleLabel = new Label
+            {
+                Text = "About CardBox Tool",
+                FontSize = 20,
+                FontAttributes = FontAttributes.Bold,
+                HorizontalTextAlignment = TextAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 10),
+                TextColor = AppInfo.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black
+            };
+            Grid.SetRow(titleLabel, 0);
+            grid.Children.Add(titleLabel);
 
-Anything wrong? Let us know:
-https://github.com/megabytesme/CardBox/issues
+            var scrollView = new ScrollView();
+            Grid.SetRow(scrollView, 1);
+            grid.Children.Add(scrollView);
 
-Privacy Policy:
-https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md
+            var contentLabel = new Label
+            {
+                TextColor = AppInfo.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black
+            };
+            var formattedString = new FormattedString();
 
-Like what you see? View my GitHub:
-https://github.com/megabytesme
+            void AddHyperlinkSpan(string text, string url)
+            {
+                var span = new Span
+                {
+                    Text = text,
+                    TextDecorations = TextDecorations.Underline,
+                    TextColor = AppInfo.RequestedTheme == AppTheme.Dark ? Colors.LightSkyBlue : Colors.Blue
+                };
+                span.GestureRecognizers.Add(new TapGestureRecognizer
+                {
+                    Command = new Command(async () => await OpenBrowser(url))
+                });
+                formattedString.Spans.Add(span);
+            }
 
-And maybe my Other Apps:
-https://apps.microsoft.com/search?query=megabytesme
+            formattedString.Spans.Add(new Span { Text = "CardBox Tool\n" });
+            formattedString.Spans.Add(new Span { Text = "Version 3.0.2.0 (MAUI)\n" });
+            formattedString.Spans.Add(new Span { Text = "Copyright © 2025 MegaBytesMe\n\n" });
 
-CardBox is designed to help you manage your loyalty cards effortlessly.";
+            formattedString.Spans.Add(new Span { Text = "Source code available on " });
+            AddHyperlinkSpan("GitHub", "https://github.com/megabytesme/CardBox");
 
-            await DisplayAlert("About CardBox Tool", aboutContent, "OK");
+            formattedString.Spans.Add(new Span { Text = "\nAnything wrong? Let us know: " });
+            AddHyperlinkSpan("Support", "https://github.com/megabytesme/CardBox/issues");
+
+            formattedString.Spans.Add(new Span { Text = "\nPrivacy Policy: " });
+            AddHyperlinkSpan("Privacy Policy", "https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md");
+
+            formattedString.Spans.Add(new Span { Text = "\nLike what you see? View my " });
+            AddHyperlinkSpan("GitHub", "https://github.com/megabytesme");
+            formattedString.Spans.Add(new Span { Text = " and maybe my " });
+            AddHyperlinkSpan("Other Apps", "https://apps.microsoft.com/search?query=megabytesme");
+
+            formattedString.Spans.Add(new Span { Text = "\n\nCardBox is designed to help you manage your loyalty cards effortlessly." });
+
+            contentLabel.FormattedText = formattedString;
+
+            scrollView.Content = contentLabel;
+
+            var closeButton = new Button
+            {
+                Text = "OK",
+                Margin = new Thickness(0, 10, 0, 0),
+                HorizontalOptions = LayoutOptions.Center,
+                BackgroundColor = AppInfo.RequestedTheme == AppTheme.Dark ? Colors.DarkSlateGray : Colors.LightGray,
+                TextColor = AppInfo.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black
+            };
+            Grid.SetRow(closeButton, 2);
+            grid.Children.Add(closeButton);
+
+            closeButton.Clicked += async (s, args) =>
+            {
+                await Navigation.PopModalAsync();
+            };
+
+            aboutDialog.Content = grid;
+            await Navigation.PushModalAsync(aboutDialog);
+        }
+
+        private async Task OpenBrowser(string url)
+        {
+            try
+            {
+                Uri uri = new Uri(url);
+                await Browser.Default.OpenAsync(uri, BrowserLaunchMode.SystemPreferred);
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Could not open link: {ex.Message}", "OK");
+            }
         }
     }
 }
