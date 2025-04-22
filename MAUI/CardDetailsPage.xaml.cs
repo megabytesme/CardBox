@@ -28,33 +28,78 @@ namespace CardBox
             if (barcodeImage == null || BindingContext is not Card selectedCard)
                 return;
 
-            ZXing.BarcodeWriterPixelData writer = new ZXing.BarcodeWriterPixelData
+            try
             {
-                Format = selectedCard.DisplayType,
-                Options = new ZXing.Common.EncodingOptions
+                ZXing.BarcodeWriterPixelData writer = new ZXing.BarcodeWriterPixelData
                 {
-                    Height = 200,
-                    Width = 200,
-                    Margin = 1
+                    Format = selectedCard.DisplayType,
+                    Options = new ZXing.Common.EncodingOptions
+                    {
+                        Height = 200,
+                        Width = 200,
+                        Margin = 1
+                    }
+                };
+
+                var pixelData = writer.Write(selectedCard.CardNumber);
+                SKImageInfo imageInfo = new SKImageInfo(pixelData.Width, pixelData.Height, SKColorType.Rgba8888);
+
+                using var bitmap = new SKBitmap(imageInfo);
+                IntPtr pixelPtr = Marshal.UnsafeAddrOfPinnedArrayElement(pixelData.Pixels, 0);
+                bitmap.InstallPixels(imageInfo, pixelPtr);
+
+                using (var image = SKImage.FromBitmap(bitmap))
+                using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                {
+                    var stream = new MemoryStream();
+                    data.SaveTo(stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    barcodeImage.Source = ImageSource.FromStream(() => new MemoryStream(stream.ToArray()));
                 }
+            }
+            catch (Exception ex)
+            {
+                barcodeImage.Source = null;
+            }
+        }
+
+        private async void OnBarcodeImageTapped(object sender, TappedEventArgs e)
+        {
+            if (barcodeImage?.Source == null)
+            {
+                return;
+            }
+
+            var fullScreenImage = new Image
+            {
+                Source = barcodeImage.Source,
+                Aspect = Aspect.AspectFit,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill
             };
 
-            var pixelData = writer.Write(selectedCard.CardNumber);
-            SKImageInfo imageInfo = new SKImageInfo(pixelData.Width, pixelData.Height, SKColorType.Rgba8888);
-
-            using var bitmap = new SKBitmap(imageInfo);
-            IntPtr pixelPtr = Marshal.UnsafeAddrOfPinnedArrayElement(pixelData.Pixels, 0);
-            bitmap.InstallPixels(imageInfo, pixelPtr);
-
-            using (var image = SKImage.FromBitmap(bitmap))
-            using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+            var gridLayout = new Grid
             {
-                var stream = new MemoryStream();
-                data.SaveTo(stream);
-                stream.Seek(0, SeekOrigin.Begin);
+                BackgroundColor = Colors.Black,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill
+            };
+            gridLayout.Children.Add(fullScreenImage);
 
-                barcodeImage.Source = ImageSource.FromStream(() => new MemoryStream(stream.ToArray()));
-            }
+            var closeGesture = new TapGestureRecognizer();
+            closeGesture.Tapped += async (s, args) =>
+            {
+                await Navigation.PopModalAsync();
+            };
+            gridLayout.GestureRecognizers.Add(closeGesture);
+
+            var fullScreenPage = new ContentPage
+            {
+                Content = gridLayout,
+                BackgroundColor = Colors.Black
+            };
+
+            await Navigation.PushModalAsync(fullScreenPage, animated: false);
         }
 
         private async void InitializePage(Card selectedCard)
@@ -62,6 +107,7 @@ namespace CardBox
             loadingProgressRing.IsVisible = true;
             loadingProgressRing.IsRunning = true;
             locationErrorLabel.IsVisible = false;
+            noLocationsLabel.IsVisible = false;
 
             try
             {
@@ -74,7 +120,7 @@ namespace CardBox
                         currentLocation.Longitude,
                         selectedCard.CardName);
 
-                    if (locations != null && locations.Count > 0)
+                    if (locations != null && locations.Any())
                     {
                         locationsListView.ItemsSource = new ObservableCollection<LocationService.Location>(locations);
                         noLocationsLabel.IsVisible = false;
@@ -87,11 +133,16 @@ namespace CardBox
                 }
                 else
                 {
-                    locationErrorLabel.Text = "Could not retrieve location. Please try again later.";
-                    locationErrorLabel.IsVisible = true;
                     noLocationsLabel.IsVisible = false;
                     locationsListView.ItemsSource = null;
                 }
+            }
+            catch (Exception ex)
+            {
+                locationErrorLabel.Text = $"An error occurred: {ex.Message}";
+                locationErrorLabel.IsVisible = true;
+                noLocationsLabel.IsVisible = false;
+                locationsListView.ItemsSource = null;
             }
             finally
             {
@@ -104,20 +155,65 @@ namespace CardBox
         {
             try
             {
-                var location = await Geolocation.GetLastKnownLocationAsync();
-                if (location != null)
+                var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+
+                if (status != PermissionStatus.Granted)
                 {
-                    return location;
+                    status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                    if (status != PermissionStatus.Granted)
+                    {
+                        if (locationErrorLabel != null)
+                        {
+                            locationErrorLabel.Text = "Location permission denied.";
+                            locationErrorLabel.IsVisible = true;
+                        }
+                        return null;
+                    }
                 }
 
                 var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
-                location = await Geolocation.GetLocationAsync(request);
+                var location = await Geolocation.GetLocationAsync(request, CancellationToken.None);
 
                 return location;
             }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                System.Diagnostics.Debug.WriteLine($"Geolocation not supported: {fnsEx.Message}");
+                if (locationErrorLabel != null)
+                {
+                    locationErrorLabel.Text = "Geolocation is not supported on this device.";
+                    locationErrorLabel.IsVisible = true;
+                }
+                return null;
+            }
+            catch (FeatureNotEnabledException fneEx)
+            {
+                System.Diagnostics.Debug.WriteLine($"Geolocation not enabled: {fneEx.Message}");
+                if (locationErrorLabel != null)
+                {
+                    locationErrorLabel.Text = "Location services are not enabled on this device.";
+                    locationErrorLabel.IsVisible = true;
+                }
+                return null;
+            }
+            catch (PermissionException pEx)
+            {
+                System.Diagnostics.Debug.WriteLine($"Geolocation permission error: {pEx.Message}");
+                if (locationErrorLabel != null)
+                {
+                    locationErrorLabel.Text = "Location permission not granted.";
+                    locationErrorLabel.IsVisible = true;
+                }
+                return null;
+            }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error getting location: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine($"Error getting location: {ex.Message}");
+                if (locationErrorLabel != null)
+                {
+                    locationErrorLabel.Text = "Unable to retrieve location.";
+                    locationErrorLabel.IsVisible = true;
+                }
                 return null;
             }
         }
@@ -163,11 +259,13 @@ namespace CardBox
 
                 try
                 {
-                    await Map.Default.OpenAsync(new Location(selectedLocation.Latitude, selectedLocation.Longitude), options);
+                    var locationToOpen = new Microsoft.Maui.Devices.Sensors.Location(selectedLocation.Latitude, selectedLocation.Longitude);
+                    await Map.Default.OpenAsync(locationToOpen, options);
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlert("Error", "No map application available to open.", "OK");
+                    System.Diagnostics.Debug.WriteLine($"Map Error: {ex}");
+                    await DisplayAlert("Error", "Could not open map application. Please ensure a map app is installed.", "OK");
                 }
             }
         }
