@@ -1,18 +1,16 @@
 ﻿using Shared_Code;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace CardBox
 {
     public partial class MainPage : ContentPage
     {
-        public ObservableCollection<Card> Cards => CardRepository.Instance.Cards;
         public ObservableCollection<Card> FilteredCards { get; private set; }
 
         public MainPage()
         {
             InitializeComponent();
-            FilteredCards = new ObservableCollection<Card>(Cards);
+            FilteredCards = new ObservableCollection<Card>();
             BindingContext = this;
         }
 
@@ -25,35 +23,48 @@ namespace CardBox
         private void RefreshCardList()
         {
             CardRepository.Instance.LoadCards();
-            FilteredCards.Clear();
-            foreach (var card in Cards)
-            {
-                FilteredCards.Add(card);
-            }
+            var allCards = CardRepository.Instance.Cards;
             SearchBar searchBarControl = this.FindByName<SearchBar>("searchBar");
-            if (searchBarControl != null)
-            {
-                OnSearchTextChanged(searchBarControl, new TextChangedEventArgs(null, searchBarControl.Text));
-            }
+
+            var currentSearchTerm = searchBarControl?.Text ?? string.Empty;
+            FilterCards(currentSearchTerm);
         }
+
 
         private Command<Card> _viewCardCommand;
         public Command<Card> ViewCardCommand => _viewCardCommand ?? (_viewCardCommand = new Command<Card>(OnViewCard));
 
         private async void OnViewCard(Card selectedCard)
         {
+            if (selectedCard == null) return;
             await Navigation.PushAsync(new CardDetailPage(selectedCard, CardRepository.Instance));
+        }
+        private async void AddCardButton_Click(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new AddCardPage());
+        }
+
+        private void FilterCards(string searchTerm)
+        {
+            var lowerSearchTerm = searchTerm?.ToLowerInvariant() ?? string.Empty;
+            var sourceCards = CardRepository.Instance.Cards;
+
+            var filtered = sourceCards
+                .Where(c => string.IsNullOrEmpty(lowerSearchTerm)
+                            || (c.CardName?.ToLowerInvariant().Contains(lowerSearchTerm) ?? false)
+                            || (c.CardNickname?.ToLowerInvariant().Contains(lowerSearchTerm) ?? false))
+                .ToList();
+
+            FilteredCards.Clear();
+            foreach (var card in filtered)
+            {
+                FilteredCards.Add(card);
+            }
         }
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            var searchTerm = e.NewTextValue?.ToLower() ?? string.Empty;
-            var filteredCards = Cards.Where(c => (c.CardName?.ToLower().Contains(searchTerm) ?? false) || (c.CardNickname?.ToLower().Contains(searchTerm) ?? false));
-            FilteredCards.Clear();
-            foreach (var card in filteredCards)
-            {
-                FilteredCards.Add(card);
-            }
+            FilterCards(e.NewTextValue);
         }
     }
 }
