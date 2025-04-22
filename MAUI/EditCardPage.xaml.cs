@@ -1,14 +1,8 @@
-﻿using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Xaml;
-using Shared_Code;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Shared_Code;
 using ZXing;
 
 namespace CardBox
 {
-    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EditCardPage : ContentPage
     {
         private Card _selectedCard;
