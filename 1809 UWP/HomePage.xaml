@@ -32,15 +32,24 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
-                                        <TextBlock Text="{x:Bind CardName}"
-                                                   TextAlignment="Center"
-                                                   Style="{ThemeResource BaseTextBlockStyle}"
-                                                   Grid.Row="0"
-                                                   Margin="0,0,0,8"/>
+
+                                        <StackPanel Grid.Row="0" Margin="0,0,0,8" Spacing="4">
+                                            <TextBlock Text="{x:Bind CardName}"
+                                                       TextAlignment="Center"
+                                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                                       FontWeight="SemiBold" />
+
+                                            <TextBlock Text="{x:Bind CardNickname}"
+                                                       TextAlignment="Center"
+                                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                       Margin="0,2,0,0"/>
+                                        </StackPanel>
+
                                         <Button Content="View Card"
                                                 Click="ViewCard_Click"
                                                 CommandParameter="{Binding}"
-                                                HorizontalAlignment="Stretch"
+                                            HorizontalAlignment="Stretch"
                                                 Grid.Row="1"
                                                 CornerRadius="4"/>
                                     </Grid>

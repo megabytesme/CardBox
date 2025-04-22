@@ -2,9 +2,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:CardBox"
-             x:Class="CardBox.MainPage"
+    x:Class="CardBox.MainPage"
              x:Name="mainPage"
-    BackgroundColor="{DynamicResource Background}">
+             BackgroundColor="{DynamicResource Background}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -25,65 +25,83 @@
                    TextColor="{DynamicResource OnSurface}" />
 
         <CollectionView x:Name="CardsCollectionView"
-                ItemsSource="{Binding FilteredCards}"
-                Grid.Column="1"
-                Grid.Row="1"
-                Margin="10,0,10,10"
-                IsVisible="True">
+                        ItemsSource="{Binding FilteredCards}"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        Margin="10,0,10,10"
+                        IsVisible="True">
             <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame BackgroundColor="{DynamicResource OnPrimary}"
-                   BorderColor="{DynamicResource InversePrimary}">
-                        <StackLayout>
-                            <Label Text="{Binding CardName}"
-                           TextColor="{DynamicResource OnSurface}" />
-                            <Button Text="View Card"
-                            Command="{Binding Source={x:Reference mainPage}, Path=BindingContext.ViewCardCommand}"
-                            CommandParameter="{Binding .}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="{DynamicResource OnPrimary}" />
-                        </StackLayout>
+                           BorderColor="{DynamicResource InversePrimary}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackLayout HorizontalOptions="Center" Grid.Column="1" Grid.Row="0">
+                                <Label Text="{Binding CardName}"
+                                       FontAttributes="Bold"
+                                       FontSize="Medium"
+                                       TextColor="{DynamicResource OnSurface}"
+                                       HorizontalTextAlignment="Center"/>
+
+                                <Label Text="{Binding CardNickname}"
+                                       FontSize="Small"
+                                       TextColor="{DynamicResource OnSurfaceVariant}"
+                                       HorizontalTextAlignment="Center"/>
+
+                            </StackLayout>
+
+                            <Button Text="View Card" Grid.Column="1" Grid.Row="1"
+                                    Command="{Binding Source={x:Reference mainPage}, Path=BindingContext.ViewCardCommand}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="{DynamicResource Primary}"
+                                    TextColor="{DynamicResource OnPrimary}"
+                                    Margin="0,10,0,0" />
+                        </Grid>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-            <CollectionView.Triggers>
-                <DataTrigger TargetType="CollectionView"
-                     Binding="{Binding FilteredCards.Count}"
-                     Value="0">
-                    <Setter Property="IsVisible" Value="False" />
-                </DataTrigger>
-            </CollectionView.Triggers>
         </CollectionView>
-        
+
         <VerticalStackLayout x:Name="NoCardsView"
-            Grid.Column="1"
+                             Grid.Column="1"
                              Grid.Row="1"
-                             VerticalOptions="Start"
-                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+            HorizontalOptions="Center"
                              Spacing="10"
                              IsVisible="False">
 
             <Label x:Name="NoCardsTextBlock"
-                       Text="No cards available."
-                       Margin="5"
-                       TextColor="{DynamicResource OnSurface}" />
-            <Button x:Name="AddCardButton"
+                   Text="No cards available."
+                   HorizontalTextAlignment="Center"
+                TextColor="{DynamicResource OnSurface}" />
+                <Button x:Name="AddCardButton"
                     Text="Add Card"
                     Clicked="AddCardButton_Click"
-                    Margin="5"
                     BackgroundColor="{DynamicResource Primary}"
                     TextColor="{DynamicResource OnPrimary}"/>
 
-            <VerticalStackLayout.Triggers>
-                <DataTrigger TargetType="VerticalStackLayout"
-                              Binding="{Binding FilteredCards.Count}"
-                              Value="0">
-                    <Setter Property="IsVisible" Value="True" />
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout"
+                             Binding="{Binding FilteredCards.Count}"
+                             Value="0">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="VerticalStackLayout"
+                             Binding="{Binding FilteredCards.Count}"
+                             Value="0">
+                    <DataTrigger.Setters>
+                        <Setter Property="IsVisible" Value="True"/>
+                    </DataTrigger.Setters>
                 </DataTrigger>
-            </VerticalStackLayout.Triggers>
+
+                </VerticalStackLayout.Triggers>
         </VerticalStackLayout>
     </Grid>
 </ContentPage>
