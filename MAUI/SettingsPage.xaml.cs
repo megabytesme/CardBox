@@ -343,7 +343,7 @@ namespace CardBox
         {
             string aboutContent = 
             @"CardBox Tool
-Version 3.0.1.0 (MAUI)
+Version 3.0.2.0 (MAUI)
 Copyright © 2025 MegaBytesMe
 
 Source code available on GitHub:

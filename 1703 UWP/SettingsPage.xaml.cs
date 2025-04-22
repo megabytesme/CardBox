@@ -266,7 +266,7 @@ namespace _1703_UWP
                         {
                             new Run() { Text = "CardBox Tool" },
                             new LineBreak(),
-                            new Run() { Text = "Version 1.0.1.0 (1703_UWP)" },
+                            new Run() { Text = "Version 1.0.2.0 (1703_UWP)" },
                             new LineBreak(),
                             new Run() { Text = "Copyright © 2025 MegaBytesMe" },
                             new LineBreak(),
