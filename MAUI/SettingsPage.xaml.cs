@@ -6,6 +6,7 @@ using ZXing.Net.Maui.Controls;
 using ZXing;
 using SkiaSharp;
 using ZXing.SkiaSharp;
+using Microsoft.Maui.Controls;
 
 namespace CardBox
 {
@@ -139,13 +140,13 @@ namespace CardBox
 
                 string barcodeValue = await ShowBarcodeScannerDialog();
 
-                if (!string.IsNullOrEmpty(barcodeValue))
+                if (!string.IsNullOrEmpty(barcodeValue))
                 {
-                    await ImportCardsFromTextAsync(barcodeValue);
+                    await ImportCardsFromTextAsync(barcodeValue);
                 }
                 else
                 {
-                    await DisplayAlert("Scan Cancelled", "Barcode scanning cancelled or no barcode detected.", "OK");
+                    await DisplayAlert("Scan Cancelled", "Barcode scanning cancelled or no barcode detected.", "OK");
                 }
             }
             catch (Exception ex)
@@ -160,11 +161,11 @@ namespace CardBox
         }
 
         private async Task<string> ShowBarcodeScannerDialog()
-        {
+        {
             var barcodeDetectedTCS = new TaskCompletionSource<string>();
-            bool barcodeScanCompleted = false;
+            bool barcodeScanCompleted = false;
 
-            var scanInstructionLabel = new Label
+            var scanInstructionLabel = new Label
             {
                 Text = "Scan QR Code to Import Cards",
                 FontSize = 18,
@@ -178,7 +179,7 @@ namespace CardBox
                 Options = new BarcodeReaderOptions
                 {
                     Formats = BarcodeFormats.TwoDimensional,
-                    AutoRotate = true,
+                    AutoRotate = true,
                     Multiple = false
                 },
                 HeightRequest = 300,
@@ -198,10 +199,10 @@ namespace CardBox
             cancelButton.Clicked += async (s, e) =>
             {
                 if (!barcodeScanCompleted)
-                {
+                {
                     barcodeScanCompleted = true;
-                    barcodeDetectedTCS.SetResult(null);
-                    await Navigation.PopModalAsync();
+                    barcodeDetectedTCS.SetResult(null);
+                    await Navigation.PopModalAsync();
                 }
             };
 
@@ -210,11 +211,11 @@ namespace CardBox
                 if (e.Results.Length > 0)
                 {
                     if (!barcodeScanCompleted)
-                    {
+                    {
                         barcodeScanCompleted = true;
-                        barcodeDetectedTCS.SetResult(e.Results[0].Value);
-                        MainThread.BeginInvokeOnMainThread(async () => { await Navigation.PopModalAsync(); });
-                    }
+                        barcodeDetectedTCS.SetResult(e.Results[0].Value);
+                        MainThread.BeginInvokeOnMainThread(async () => { await Navigation.PopModalAsync(); });
+                    }
                 }
             };
 
@@ -233,7 +234,7 @@ namespace CardBox
 
             await Navigation.PushModalAsync(qrCodeDialog);
             return await barcodeDetectedTCS.Task;
-        }
+        }
 
         private async Task ImportCardsFromTextAsync(string importedText)
         {
@@ -323,7 +324,7 @@ namespace CardBox
             var content = new StackLayout
             {
                 Children = { savingLabel, qrCodeView, closeButton },
-                VerticalOptions = LayoutOptions.CenterAndExpand,
+                VerticalOptions = LayoutOptions.CenterAndExpand,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 WidthRequest = 300
             };
@@ -334,6 +335,35 @@ namespace CardBox
             };
 
             await Navigation.PushModalAsync(qrCodeDialog);
+        }
+    
+
+
+    private async void AboutButton_Click(object sender, EventArgs e)
+        {
+            string aboutContent = 
+            @"CardBox Tool
+Version 2.0.1.0 (MAUI)
+Copyright © 2025 MegaBytesMe
+
+Source code available on GitHub:
+https://github.com/megabytesme/CardBox
+
+Anything wrong? Let us know:
+https://github.com/megabytesme/CardBox/issues
+
+Privacy Policy:
+https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md
+
+Like what you see? View my GitHub:
+https://github.com/megabytesme
+
+And maybe my Other Apps:
+https://apps.microsoft.com/search?query=megabytesme
+
+CardBox is designed to help you manage your loyalty cards effortlessly.";
+
+            await DisplayAlert("About CardBox Tool", aboutContent, "OK");
         }
     }
 }

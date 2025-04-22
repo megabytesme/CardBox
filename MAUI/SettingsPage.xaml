@@ -35,6 +35,14 @@
                     BackgroundColor="{DynamicResource Primary}"
                     TextColor="{DynamicResource OnPrimary}"/>
 
+            <Button Text="About"
+                    Clicked="AboutButton_Click"
+                    WidthRequest="200"
+                    HorizontalOptions="Center"
+                    CornerRadius="4"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource OnPrimary}"/>
+
             <ActivityIndicator x:Name="progressRing"
                                IsRunning="False"
                                WidthRequest="40"
