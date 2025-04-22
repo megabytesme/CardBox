@@ -7,14 +7,6 @@
                  Margin="5"
                  Spacing="5">
 
-        <Button x:Name="HomeButton"
-                Style="{StaticResource PlatformButtonStyle}"
-                BackgroundColor="{DynamicResource Primary}"
-                TextColor="{DynamicResource OnPrimary}"
-                Text="🏠"
-                Clicked="OnHomeClicked" 
-                CornerRadius="8" />
-
         <Button x:Name="AddButton"
                 Style="{StaticResource PlatformButtonStyle}"
                 BackgroundColor="{DynamicResource Primary}"

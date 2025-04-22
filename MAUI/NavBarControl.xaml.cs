@@ -8,11 +8,6 @@
             SetButtonTextsAndFonts();
         }
 
-        private async void OnHomeClicked(object sender, EventArgs e)
-        {
-            await Navigation.PushAsync(new MainPage());
-        }
-
         private async void OnAddClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new AddCardPage());
@@ -27,19 +22,16 @@
         {
             if (DeviceInfo.Platform == DevicePlatform.Android)
             {
-                HomeButton.Text = "🏠";
                 AddButton.Text = "➕";
                 SettingsButton.Text = "⚙️";
             }
             else if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
-                HomeButton.Text = "🏠";
                 AddButton.Text = "➕";
                 SettingsButton.Text = "⚙️";
             }
             else if (DeviceInfo.Platform == DevicePlatform.WinUI)
             {
-                SetButtonProps(HomeButton, "\uE80F", "Segoe MDL2 Assets");
                 SetButtonProps(AddButton, "\uE710", "Segoe MDL2 Assets");
                 SetButtonProps(SettingsButton, "\uE713", "Segoe MDL2 Assets");
             }
