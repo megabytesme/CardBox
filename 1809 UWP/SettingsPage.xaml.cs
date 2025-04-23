@@ -1,6 +1,6 @@
 ﻿using Shared_Code_UWP.BasePages;
 using System;
-using System.Reflection;
+using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 using ZXing;
 
@@ -26,11 +26,16 @@ namespace _1809_UWP
             {
                 try
                 {
-                    var assembly = this.GetType().GetTypeInfo().Assembly;
-                    var version = assembly.GetName().Version;
-                    return $"2.{version.Minor}.{version.Build}.{version.Revision} (1809_UWP)";
+                    Package package = Package.Current;
+                    PackageId packageId = package.Id;
+                    PackageVersion version = packageId.Version;
+
+                    return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision} (1809_UWP)";
                 }
-                catch { return "Unknown Version (1809_UWP)"; }
+                catch (Exception ex)
+                {
+                    return "Unknown Version (1809_UWP)";
+                }
             }
         }
 
