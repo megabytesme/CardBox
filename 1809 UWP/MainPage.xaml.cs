@@ -5,41 +5,53 @@ using Windows.UI.Xaml.Media;
 using Shared_Code;
 using Windows.Foundation.Metadata;
 using Windows.UI;
-using Windows.UI.Core;
 using muxc = Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using System.Linq;
+using System;
+using Windows.UI.Xaml.Navigation;
 
 namespace _1809_UWP
 {
     public sealed partial class MainPage : Page
     {
         public ObservableCollection<Card> Cards => CardRepository.Instance.Cards;
-
         private ObservableCollection<Card> filteredCards = new ObservableCollection<Card>();
+
+        public Frame MainContentFrame => ContentFrame;
 
         public MainPage()
         {
             this.InitializeComponent();
-            DataContext = this;
+            this.DataContext = this;
 
             ApplyBackdropOrAcrylic();
+            SetupTitleBar();
 
-            NavView.ItemInvoked += NavView_ItemInvoked;
             Loaded += MainPage_Loaded;
-            ContentFrame.Navigated += ContentFrame_Navigated;
+        }
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            NavView_Navigate("HomePage", null);
 
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            var homeItem = NavView.MenuItems.OfType<muxc.NavigationViewItem>().FirstOrDefault(i => i.Tag?.ToString() == "HomePage");
+            if (homeItem != null)
+            {
+                NavView.SelectedItem = homeItem;
+            }
+        }
 
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+        private void SetupTitleBar()
+        {
+            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
 
-            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonBackgroundColor = Colors.Transparent;
-            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            titleBar.ButtonPressedBackgroundColor = Colors.Transparent;
+            var appViewTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            appViewTitleBar.ButtonBackgroundColor = Colors.Transparent;
+            appViewTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            appViewTitleBar.ButtonPressedBackgroundColor = Colors.Transparent;
 
             Window.Current.SetTitleBar(AppTitleBar);
         }
@@ -62,72 +74,78 @@ namespace _1809_UWP
             }
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.Navigate(typeof(HomePage));
-            NavView.SelectedItem = NavView.MenuItems[0];
-        }
-
         private void NavView_ItemInvoked(muxc.NavigationView sender, muxc.NavigationViewItemInvokedEventArgs args)
         {
+            string tag;
             if (args.IsSettingsInvoked)
             {
-                ContentFrame.Navigate(typeof(SettingsPage));
+                tag = "SettingsPage";
             }
             else
             {
-                var item = args.InvokedItemContainer as muxc.NavigationViewItem;
-                switch (item.Tag.ToString())
-                {
-                    case "HomePage":
-                        ContentFrame.Navigate(typeof(HomePage));
-                        break;
-                    case "AddCardPage":
-                        ContentFrame.Navigate(typeof(AddCardPage));
-                        break;
-                }
+                var invokedItem = args.InvokedItemContainer as muxc.NavigationViewItem;
+                tag = invokedItem?.Tag?.ToString();
+            }
+
+            if (!string.IsNullOrEmpty(tag))
+            {
+                NavView_Navigate(tag, args.RecommendedNavigationTransitionInfo);
             }
         }
 
-        private void ContentFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        private void NavView_BackRequested(muxc.NavigationView sender, muxc.NavigationViewBackRequestedEventArgs args)
         {
-            var backButton = (Button)FindName("BackButton");
-            if (backButton != null)
-            {
-                backButton.Visibility = ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
-            }
+            TryGoBack();
+        }
 
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = ContentFrame.CanGoBack ?
-                AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Disabled;
-
-            if (e.SourcePageType == typeof(HomePage))
+        private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            if (e.SourcePageType == typeof(SettingsPage))
             {
-                SearchBox.Visibility = Visibility.Visible;
+                NavView.SelectedItem = NavView.SettingsItem;
             }
             else
             {
-                SearchBox.Visibility = Visibility.Collapsed;
+                var tagToSelect = e.SourcePageType.Name;
+                NavView.SelectedItem = NavView.MenuItems
+                                            .OfType<muxc.NavigationViewItem>()
+                                            .FirstOrDefault(item => item.Tag?.ToString() == tagToSelect);
             }
+
+            SearchBox.Visibility = (e.SourcePageType == typeof(HomePage)) ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
+        private void NavView_Navigate(string navItemTag, Windows.UI.Xaml.Media.Animation.NavigationTransitionInfo transitionInfo)
         {
-            if (ContentFrame.CanGoBack)
+            Type pageType = null;
+            switch (navItemTag)
             {
-                e.Handled = true;
-                GoBack();
+                case "HomePage":
+                    pageType = typeof(HomePage);
+                    break;
+                case "AddCardPage":
+                    pageType = typeof(AddCardPage);
+                    break;
+                case "SettingsPage":
+                    pageType = typeof(SettingsPage);
+                    break;
+            }
+
+            if (pageType != null && ContentFrame.CurrentSourcePageType != pageType)
+            {
+                ContentFrame.Navigate(pageType, null, transitionInfo);
             }
         }
 
-        private void GoBack()
+        private bool TryGoBack()
         {
             if (ContentFrame.CanGoBack)
             {
                 ContentFrame.GoBack();
+                return true;
             }
+            return false;
         }
-
-        public Frame MainContentFrame => ContentFrame;
 
         private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
@@ -149,6 +167,5 @@ namespace _1809_UWP
                 }
             }
         }
-
     }
 }
