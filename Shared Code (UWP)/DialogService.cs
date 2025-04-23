@@ -1,5 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -20,33 +25,26 @@ namespace Shared_Code_UWP.Services
             if (context == null)
             {
                 System.Diagnostics.Debug.WriteLine("DialogService Error: context cannot be null.");
-                await ShowSimpleErrorDialog("Cannot display dialog: Application context is missing.");
                 return ContentDialogResult.None;
             }
             if (contentElement == null)
             {
                 System.Diagnostics.Debug.WriteLine("DialogService Error: contentElement cannot be null.");
-                await ShowSimpleErrorDialog("Cannot display dialog: No content provided.");
                 return ContentDialogResult.None;
             }
 
             string actualPrimaryText = string.IsNullOrEmpty(primaryButtonText) ? null : primaryButtonText;
             string actualSecondaryText = string.IsNullOrEmpty(secondaryButtonText) ? null : secondaryButtonText;
             string actualCloseText = string.IsNullOrEmpty(closeButtonText) ? "Close" : closeButtonText;
-
             ContentDialog dialog = new ContentDialog();
-
             dialog.Title = title;
             dialog.Content = contentElement;
             dialog.CloseButtonText = actualCloseText;
-
             if (actualPrimaryText != null) { dialog.PrimaryButtonText = actualPrimaryText; }
             if (actualSecondaryText != null) { dialog.SecondaryButtonText = actualSecondaryText; }
-
             dialog.DefaultButton = actualPrimaryText != null ? ContentDialogButton.Primary :
                                    actualSecondaryText != null ? ContentDialogButton.Secondary :
                                    ContentDialogButton.Close;
-
             ContentDialogResult result = ContentDialogResult.None;
             try
             {
@@ -56,7 +54,6 @@ namespace Shared_Code_UWP.Services
             {
                 System.Diagnostics.Debug.WriteLine($"Error showing content dialog: {ex.GetType().FullName} - {ex.Message}");
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
-                await ShowSimpleErrorDialog("Could not display the dialog.");
             }
             return result;
         }
@@ -74,7 +71,6 @@ namespace Shared_Code_UWP.Services
             if (imageSource == null || context == null || imageWidth <= 0 || imageHeight <= 0 || imageSource.PixelWidth == 0)
             {
                 System.Diagnostics.Debug.WriteLine("DialogService.ShowImageDialogAsync: Invalid parameters.");
-                await ShowSimpleErrorDialog("Cannot display image: Invalid data or size.");
                 return ContentDialogResult.None;
             }
 
@@ -84,8 +80,69 @@ namespace Shared_Code_UWP.Services
                 Width = imageWidth,
                 Height = imageHeight,
                 Stretch = Stretch.Uniform,
-                HorizontalAlignment = HorizontalAlignment.Center
+                HorizontalAlignment = HorizontalAlignment.Center,
+                IsTapEnabled = true,
+                IsRightTapEnabled = true
             };
+
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            string shareTitle = title ?? "Shared Image";
+
+            async void PrepareAndShareData(DataRequest request)
+            {
+                request.Data.Properties.Title = shareTitle;
+                var deferral = request.GetDeferral();
+                try
+                {
+                    var streamRef = await GetBitmapStreamReferenceAsync(imageSource);
+                    if (streamRef != null)
+                    {
+                        request.Data.SetBitmap(streamRef);
+                        if (!string.IsNullOrEmpty(description))
+                        {
+                            request.Data.Properties.Description = description;
+                        }
+                    }
+                    else
+                    {
+                        request.FailWithDisplayText("Error preparing image");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error preparing image for sharing: {ex.Message}");
+                    request.FailWithDisplayText("Error preparing image");
+                }
+                finally
+                {
+                    deferral.Complete();
+                }
+            }
+
+            async Task HandleCopyAndShare()
+            {
+                bool copied = await CopyImageToClipboardInternalAsync(imageSource);
+                if (copied)
+                {
+                    dataTransferManager.DataRequested += (s, args) => PrepareAndShareData(args.Request);
+                    try { DataTransferManager.ShowShareUI(); }
+                    catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Error showing share UI: {ex.Message}"); }
+                    finally { dataTransferManager.DataRequested -= (s, args) => PrepareAndShareData(args.Request); }
+                }
+            }
+
+
+            displayImage.Tapped += async (sender, e) =>
+            {
+                await HandleCopyAndShare();
+            };
+
+            displayImage.RightTapped += async (sender, e) =>
+            {
+                e.Handled = true;
+                await HandleCopyAndShare();
+            };
+
 
             StackPanel imageContentPanel = new StackPanel
             {
@@ -93,7 +150,17 @@ namespace Shared_Code_UWP.Services
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
+
             imageContentPanel.Children.Add(displayImage);
+
+            TextBlock shareInstruction = new TextBlock
+            {
+                Text = "(tap or right-click to copy and share)",
+                FontSize = 12,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Foreground = (SolidColorBrush)Application.Current.Resources["SystemControlPageTextBaseMediumBrush"]
+            };
+            imageContentPanel.Children.Add(shareInstruction);
 
             if (!string.IsNullOrEmpty(description))
             {
@@ -103,7 +170,7 @@ namespace Shared_Code_UWP.Services
                     TextWrapping = TextWrapping.Wrap,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     TextAlignment = TextAlignment.Center,
-                    Margin = new Thickness(0, 12, 0, 0)
+                    Margin = new Thickness(0, 8, 0, 0)
                 };
                 imageContentPanel.Children.Add(descriptionBlock);
             }
@@ -118,6 +185,49 @@ namespace Shared_Code_UWP.Services
             );
         }
 
+        private static async Task<RandomAccessStreamReference> GetBitmapStreamReferenceAsync(WriteableBitmap bitmap)
+        {
+            if (bitmap == null) return null;
+            try
+            {
+                InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream();
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
+                Stream pixelStream = bitmap.PixelBuffer.AsStream();
+                byte[] pixels = new byte[pixelStream.Length];
+                await pixelStream.ReadAsync(pixels, 0, pixels.Length);
+                encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)bitmap.PixelWidth, (uint)bitmap.PixelHeight, 96.0, 96.0, pixels);
+                await encoder.FlushAsync();
+                stream.Seek(0);
+                return RandomAccessStreamReference.CreateFromStream(stream);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error encoding bitmap to stream: {ex.Message}");
+                return null;
+            }
+        }
+
+        private static async Task<bool> CopyImageToClipboardInternalAsync(WriteableBitmap bitmapToCopy)
+        {
+            if (bitmapToCopy == null) return false;
+            try
+            {
+                var streamRef = await GetBitmapStreamReferenceAsync(bitmapToCopy);
+                if (streamRef == null) return false;
+
+                DataPackage dataPackage = new DataPackage();
+                dataPackage.RequestedOperation = DataPackageOperation.Copy;
+                dataPackage.SetBitmap(streamRef);
+                Clipboard.SetContent(dataPackage);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error copying image to clipboard: {ex.Message}");
+                return false;
+            }
+        }
+
         public static async Task<ContentDialogResult> ShowTextDialogAsync(
             FrameworkElement context,
             string message,
@@ -127,8 +237,6 @@ namespace Shared_Code_UWP.Services
         {
             if (context == null || string.IsNullOrEmpty(message))
             {
-                System.Diagnostics.Debug.WriteLine("DialogService.ShowTextDialogAsync: Invalid parameters.");
-                await ShowSimpleErrorDialog("Cannot display dialog: Context or message missing.");
                 return ContentDialogResult.None;
             }
 
@@ -152,24 +260,6 @@ namespace Shared_Code_UWP.Services
                 primaryButtonText: primaryButtonText,
                 closeButtonText: closeButtonText
             );
-        }
-
-        private static async Task ShowSimpleErrorDialog(string message)
-        {
-            try
-            {
-                ContentDialog errorDialog = new ContentDialog
-                {
-                    Title = "Error",
-                    Content = new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap },
-                    CloseButtonText = "OK"
-                };
-                await errorDialog.ShowAsync();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Failed to show simple error dialog: {ex.Message}");
-            }
         }
     }
 }
