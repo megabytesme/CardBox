@@ -49,9 +49,11 @@ namespace _1809_UWP
 
         private void SetupTitleBar()
         {
+            Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             var appViewTitleBar = ApplicationView.GetForCurrentView().TitleBar;
             appViewTitleBar.ButtonBackgroundColor = Colors.Transparent;
             appViewTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            Window.Current.SetTitleBar(AppTitleBar);
         }
 
         private void NavView_ItemInvoked(muxc.NavigationView sender, muxc.NavigationViewItemInvokedEventArgs args)

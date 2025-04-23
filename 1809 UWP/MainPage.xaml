@@ -14,7 +14,7 @@
             <VisualStateGroup x:Name="WindowSizeStates">
                 <VisualState x:Name="MediumLayout">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="641" />
+                    <AdaptiveTrigger MinWindowWidth="641" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="NavView.PaneDisplayMode" Value="LeftCompact"/>
@@ -41,8 +41,7 @@
               Grid.Row="0"
               Background="Transparent"
               Height="48"
-              VerticalAlignment="Top"
-              IsHitTestVisible="True">
+              VerticalAlignment="Top">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -61,7 +60,8 @@
                        HorizontalAlignment="Left"
                        Margin="16,0,0,0"
                        Grid.Column="1" />
-            <AutoSuggestBox x:Name="SearchBox"
+        </Grid>
+        <AutoSuggestBox x:Name="SearchBox"
                             QueryIcon="Find"
                             PlaceholderText="Search cards..."
                             TextChanged="SearchBox_TextChanged"
@@ -71,7 +71,6 @@
                 MinWidth="80"
                             Height="32"
                             Grid.Column="1" />
-        </Grid>
 
         <muxc:NavigationView
             x:Name="NavView"
