@@ -261,6 +261,7 @@
     </PackageReference>
   </ItemGroup>
   <Import Project="..\Shared Code\Shared Code.projitems" Label="Shared" />
+  <Import Project="..\Shared Code (UWP)\Shared Code (UWP).projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

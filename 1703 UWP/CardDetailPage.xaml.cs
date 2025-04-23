@@ -9,11 +9,15 @@ using ZXing.Common;
 using System;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
+using Shared_Code_UWP.Services;
+using Windows.UI.Xaml.Input;
 
 namespace _1703_UWP
 {
     public sealed partial class CardDetailPage : Page
     {
+        private Card _currentCard;
+
         public CardDetailPage()
         {
             this.InitializeComponent();
@@ -25,9 +29,10 @@ namespace _1703_UWP
 
             if (e.Parameter is Card selectedCard)
             {
-                this.DataContext = selectedCard;
+                _currentCard = selectedCard;
+                this.DataContext = _currentCard;
 
-                var barcodeBitmap = GenerateBarcode(selectedCard.CardNumber.ToString(), selectedCard.DisplayType);
+                var barcodeBitmap = GenerateBarcode(_currentCard.CardNumber.ToString(), _currentCard.DisplayType, 200, 200);
                 barcodeImage.Source = barcodeBitmap;
 
                 loadingProgressRing.Visibility = Visibility.Visible;
@@ -40,7 +45,7 @@ namespace _1703_UWP
                     var locations = await LocationService.GetNearbyLocationsAsync(
                         currentLocation.Position.Latitude,
                         currentLocation.Position.Longitude,
-                        selectedCard.CardName);
+                        _currentCard.CardName);
 
                     if (locations != null && locations.Count > 0)
                     {
@@ -67,8 +72,10 @@ namespace _1703_UWP
             }
         }
 
-        public static WriteableBitmap GenerateBarcode(string value, BarcodeFormat displayType)
+        public static WriteableBitmap GenerateBarcode(string value, BarcodeFormat displayType, int width, int height)
         {
+            if (string.IsNullOrEmpty(value)) return null;
+
             if (!BarcodeHelper.IsSupportedDisplayType(displayType) ||
                 !BarcodeHelper.ValidateBarcode(value, displayType, out string errorMessage))
             {
@@ -80,28 +87,40 @@ namespace _1703_UWP
                 Format = displayType,
                 Options = new EncodingOptions
                 {
-                    Height = 200,
-                    Width = 200,
-                    Margin = 1
+                    Height = height,
+                    Width = width,
+                    Margin = (width > 300 || height > 300) ? 10 : 2
                 }
             };
 
-            var pixelData = writer.Write(value);
-            WriteableBitmap bitmap = new WriteableBitmap(pixelData.Width, pixelData.Height);
-
-            using (var stream = bitmap.PixelBuffer.AsStream())
+            try
             {
-                stream.Write(pixelData.Pixels, 0, pixelData.Pixels.Length);
-            }
+                var pixelData = writer.Write(value);
+                if (pixelData?.Pixels == null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"ZXing writer.Write returned null pixel data for value: {value}, type: {displayType}");
+                    return null;
+                }
 
-            return bitmap;
+                WriteableBitmap bitmap = new WriteableBitmap(pixelData.Width, pixelData.Height);
+
+                using (var stream = bitmap.PixelBuffer.AsStream())
+                {
+                    stream.Write(pixelData.Pixels, 0, pixelData.Pixels.Length);
+                }
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         private void EditCard_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is Card selectedCard)
+            if (_currentCard != null)
             {
-                Frame.Navigate(typeof(EditCardPage), selectedCard);
+                Frame.Navigate(typeof(EditCardPage), _currentCard);
             }
         }
 
@@ -117,10 +136,13 @@ namespace _1703_UWP
 
             ContentDialogResult result = await deleteDialog.ShowAsync();
 
-            if (result == ContentDialogResult.Primary && DataContext is Card selectedCard)
+            if (result == ContentDialogResult.Primary && _currentCard != null)
             {
-                CardRepository.Instance.DeleteCard(selectedCard);
-                Frame.GoBack();
+                CardRepository.Instance.DeleteCard(_currentCard);
+                if (Frame.CanGoBack)
+                {
+                    Frame.GoBack();
+                }
             }
         }
 
@@ -155,6 +177,26 @@ namespace _1703_UWP
             {
                 System.Diagnostics.Debug.WriteLine("Error getting location: " + ex.Message);
                 return null;
+            }
+        }
+
+        private async void Barcode_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (_currentCard == null) return;
+
+            int displaySize = 450;
+            var largeBarcodeBitmap = GenerateBarcode(_currentCard.CardNumber.ToString(), _currentCard.DisplayType, displaySize, displaySize);
+
+            if (largeBarcodeBitmap != null)
+            {
+                await DialogService.ShowImageDialogAsync(
+                   context: this,
+                   imageSource: largeBarcodeBitmap,
+                   imageWidth: displaySize,
+                   imageHeight: displaySize,
+                   title: _currentCard.CardName ?? "Barcode",
+                   description: $"Card Number: {_currentCard.CardNumber}"
+                );
             }
         }
     }

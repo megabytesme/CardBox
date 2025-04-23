@@ -12,11 +12,15 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.Devices.Geolocation;
+using Windows.UI.Xaml.Input;
+using Shared_Code_UWP.Services;
 
 namespace _1809_UWP
 {
     public sealed partial class CardDetailPage : Page
     {
+        private Card _currentCard;
+
         public CardDetailPage()
         {
             this.InitializeComponent();
@@ -28,12 +32,12 @@ namespace _1809_UWP
             if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
             {
             muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
-            }
+                }
             else
-            {
-                this.Background = new Microsoft.UI.Xaml.Media.AcrylicBrush
                 {
-                    BackgroundSource = Microsoft.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
+                    this.Background = new Microsoft.UI.Xaml.Media.AcrylicBrush
+                    {
+                        BackgroundSource = Microsoft.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop,
                     TintColor = Colors.Transparent,
                     TintOpacity = 0.6,
                     FallbackColor = Colors.Gray
@@ -47,9 +51,10 @@ namespace _1809_UWP
 
             if (e.Parameter is Card selectedCard)
             {
-                this.DataContext = selectedCard;
+                _currentCard = selectedCard;
+                this.DataContext = _currentCard;
 
-                var barcodeBitmap = GenerateBarcode(selectedCard.CardNumber.ToString(), selectedCard.DisplayType);
+                var barcodeBitmap = GenerateBarcode(_currentCard.CardNumber.ToString(), _currentCard.DisplayType, 200, 200);
                 barcodeImage.Source = barcodeBitmap;
 
                 loadingProgressRing.Visibility = Visibility.Visible;
@@ -62,7 +67,7 @@ namespace _1809_UWP
                     var locations = await LocationService.GetNearbyLocationsAsync(
                         currentLocation.Position.Latitude,
                         currentLocation.Position.Longitude,
-                        selectedCard.CardName);
+                        _currentCard.CardName);
 
                     if (locations != null && locations.Count > 0)
                     {
@@ -88,9 +93,10 @@ namespace _1809_UWP
                 loadingProgressRing.IsActive = false;
             }
         }
-
-        public static WriteableBitmap GenerateBarcode(string value, BarcodeFormat displayType)
+        public static WriteableBitmap GenerateBarcode(string value, BarcodeFormat displayType, int width, int height)
         {
+            if (string.IsNullOrEmpty(value)) return null;
+
             if (!BarcodeHelper.IsSupportedDisplayType(displayType) ||
                 !BarcodeHelper.ValidateBarcode(value, displayType, out string errorMessage))
             {
@@ -102,28 +108,36 @@ namespace _1809_UWP
                 Format = displayType,
                 Options = new EncodingOptions
                 {
-                    Height = 200,
-                    Width = 200,
-                    Margin = 1
+                    Height = height,
+                    Width = width,
+                    Margin = (width > 300 || height > 300) ? 10 : 2
                 }
             };
 
-            var pixelData = writer.Write(value);
-            WriteableBitmap bitmap = new WriteableBitmap(pixelData.Width, pixelData.Height);
-
-            using (var stream = bitmap.PixelBuffer.AsStream())
+            try
             {
-                stream.Write(pixelData.Pixels, 0, pixelData.Pixels.Length);
-            }
+                var pixelData = writer.Write(value);
+                if (pixelData?.Pixels == null) return null;
 
-            return bitmap;
+                WriteableBitmap bitmap = new WriteableBitmap(pixelData.Width, pixelData.Height);
+
+                using (var stream = bitmap.PixelBuffer.AsStream())
+                {
+                    stream.Write(pixelData.Pixels, 0, pixelData.Pixels.Length);
+                }
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         private void EditCard_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is Card selectedCard)
+            if (_currentCard != null)
             {
-                Frame.Navigate(typeof(EditCardPage), selectedCard);
+                Frame.Navigate(typeof(EditCardPage), _currentCard);
             }
         }
 
@@ -134,15 +148,23 @@ namespace _1809_UWP
                 Title = "Delete Card",
                 Content = "Are you sure you want to delete this card?",
                 PrimaryButtonText = "Delete",
-                CloseButtonText = "Cancel"
+                CloseButtonText = "Cancel",
+                RequestedTheme = ElementTheme.Default
             };
 
             ContentDialogResult result = await deleteDialog.ShowAsync();
 
-            if (result == ContentDialogResult.Primary && DataContext is Card selectedCard)
+            if (result == ContentDialogResult.Primary && _currentCard != null)
             {
-                CardRepository.Instance.DeleteCard(selectedCard);
-                Frame.GoBack();
+                CardRepository.Instance.DeleteCard(_currentCard);
+                if (Frame.CanGoBack)
+                {
+                    Frame.GoBack();
+                }
+                else
+                {
+                    Frame.Navigate(typeof(MainPage));
+                }
             }
         }
 
@@ -155,7 +177,6 @@ namespace _1809_UWP
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }
         }
-
         private async Task<Geopoint> GetCurrentLocationAsync()
         {
             try
@@ -175,8 +196,27 @@ namespace _1809_UWP
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error getting location: " + ex.Message);
                 return null;
+            }
+        }
+
+        private async void Barcode_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (_currentCard == null) return;
+
+            int displaySize = 450;
+            var largeBarcodeBitmap = GenerateBarcode(_currentCard.CardNumber.ToString(), _currentCard.DisplayType, displaySize, displaySize);
+
+            if (largeBarcodeBitmap != null)
+            {
+                await DialogService.ShowImageDialogAsync(
+                   context: this,
+                   imageSource: largeBarcodeBitmap,
+                   imageWidth: displaySize,
+                   imageHeight: displaySize,
+                   title: _currentCard.CardName ?? "Barcode",
+                   description: $"Card Number: {_currentCard.CardNumber}"
+                );
             }
         }
     }

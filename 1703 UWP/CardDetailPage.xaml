@@ -20,7 +20,14 @@
                     <StackPanel>
                         <TextBlock Text="{Binding CardName}" FontSize="22" FontWeight="Bold" Foreground="White"/>
                         <TextBlock Text="{Binding CardNickname}" FontSize="20" Margin="0,0,0,10" Foreground="LightGray"/>
-                        <Image x:Name="barcodeImage" Height="200" Width="200" Stretch="Fill"/>
+                        <Image x:Name="barcodeImage"
+                               Height="200" Width="200" Stretch="Fill"
+                               IsTapEnabled="True"
+                               Tapped="Barcode_Tapped">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Tap to enlarge barcode"/>
+                            </ToolTipService.ToolTip>
+                        </Image>
                         <TextBlock Text="{Binding CardNumber}" FontSize="20" Margin="0,0,0,-15" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="LightGray"/>
                     </StackPanel>
                 </Border>

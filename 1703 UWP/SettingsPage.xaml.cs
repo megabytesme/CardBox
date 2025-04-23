@@ -15,6 +15,7 @@ using System.Linq;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Documents;
 using Windows.ApplicationModel.DataTransfer;
+using Shared_Code_UWP.Services;
 
 namespace _1703_UWP
 {
@@ -175,34 +176,29 @@ namespace _1703_UWP
 
             var cards = CardRepository.Instance.Cards;
             string exportedText = _importExport.ExportCardsToText(cards);
-
+            int qrDisplaySize = 450;
             var qrCodeBitmap = await GenerateQrCodeAsync(exportedText);
 
             progressRing.IsActive = false;
 
-            var image = new Image
+            if (qrCodeBitmap != null)
             {
-                Source = qrCodeBitmap,
-                Stretch = Windows.UI.Xaml.Media.Stretch.Uniform,
-                Width = 200,
-                Height = 200
-            };
+                ContentDialogResult result = await DialogService.ShowImageDialogAsync(
+                    context: this,
+                    imageSource: qrCodeBitmap,
+                    imageWidth: qrDisplaySize,
+                    imageHeight: qrDisplaySize,
+                    title: "Exported QR Code",
+                    description: "Scan this code to import cards on another device, or copy the text.",
+                    primaryButtonText: "Copy as Text"
+                );
 
-            var dialog = new ContentDialog
-            {
-                Title = "Exported QR Code",
-                Content = new ScrollViewer { Content = image },
-                PrimaryButtonText = "Copy as Text",
-                CloseButtonText = "OK",
-                DefaultButton = ContentDialogButton.Close
-            };
-
-            dialog.PrimaryButtonClick += async (_s, _e) =>
-            {
-                CopyExportedTextToClipboard(exportedText);
-            };
-
-            await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    CopyExportedTextToClipboard(exportedText);
+                    await ShowSuccessDialog("Exported text copied to clipboard.");
+                }
+            }
         }
 
         private void CopyExportedTextToClipboard(string exportedText)
@@ -231,8 +227,8 @@ namespace _1703_UWP
                     Format = BarcodeFormat.QR_CODE,
                     Options = new EncodingOptions
                     {
-                        Height = 400,
-                        Width = 400,
+                        Height = 450,
+                        Width = 450,
                         Margin = 0
                     }
                 };
@@ -255,67 +251,50 @@ namespace _1703_UWP
 
         private async void AboutButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog
+            TextBlock aboutContent = new TextBlock()
             {
-                Title = "About CardBox Tool",
-                Content = new ScrollViewer()
+                Inlines =
                 {
-                    Content = new TextBlock()
-                    {
-                        Inlines =
-                        {
-                            new Run() { Text = "CardBox Tool" },
-                            new LineBreak(),
-                            new Run() { Text = "Version 1.0.2.0 (1703_UWP)" },
-                            new LineBreak(),
-                            new Run() { Text = "Copyright © 2025 MegaBytesMe" },
-                            new LineBreak(),
-                            new Run() { Text = " "},
-                            new LineBreak(),
-                            new Run() { Text = "Source code available on " },
-                            new Hyperlink()
-                            {
-                            NavigateUri = new Uri("https://github.com/megabytesme/CardBox"),
-                            Inlines = { new Run() { Text = "GitHub" } }
-                            },
-                            new LineBreak(),
-                            new Run() { Text = "Anything wrong? Let us know: " },
-                            new Hyperlink()
-                            {
-                            NavigateUri = new Uri("https://github.com/megabytesme/CardBox/issues"),
-                            Inlines = { new Run() { Text = "Support" } }
-                            },
-                            new LineBreak(),
-                            new Run() { Text = "Privacy Policy: " },
-                            new Hyperlink()
-                            {
-                            NavigateUri = new Uri("https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md"),
-                            Inlines = { new Run() { Text = "Privacy Policy" } }
-                            },
-                            new LineBreak(),
-                            new Run() { Text = "Like what you see? View my " },
-                            new Hyperlink()
-                            {
-                            NavigateUri = new Uri("https://github.com/megabytesme"),
-                            Inlines = { new Run() { Text = "GitHub" } }
-                            },
-                            new Run() { Text = " and maybe my " },
-                            new Hyperlink()
-                            {
-                            NavigateUri = new Uri("https://apps.microsoft.com/search?query=megabytesme"),
-                            Inlines = { new Run() { Text = "Other Apps" } }
-                            },
-                            new LineBreak(),
-                            new Run() { Text = " "},
-                            new LineBreak(),
-                            new Run() { Text = "CardBox is designed to help you manage your loyalty cards effortlessly." }
-                        },
-                    TextWrapping = TextWrapping.Wrap
-                    }
-                },
-                CloseButtonText = "OK"
-            };
-            await dialog.ShowAsync();
+                    new Run() { Text = "CardBox Tool" },
+                    new LineBreak(),
+                    new Run() { Text = "Version 1.0.2.0 (1703_UWP)" },
+                    new LineBreak(),
+                    new Run() { Text = "Copyright © 2025 MegaBytesMe" },
+                    new LineBreak(),
+                    new Run() { Text = " "},
+                    new LineBreak(),
+                    new Run() { Text = "Source code available on " },
+                    new Hyperlink() { NavigateUri = new Uri("https://github.com/megabytesme/CardBox"), Inlines = { new Run() { Text = "GitHub" } } },
+                    new LineBreak(),
+                    new Run() { Text = "Anything wrong? Let us know: " },
+                    new Hyperlink() { NavigateUri = new Uri("https://github.com/megabytesme/CardBox/issues"), Inlines = { new Run() { Text = "Support" } } },
+                    new LineBreak(),
+                    new Run() { Text = "Privacy Policy: " },
+                    new Hyperlink() { NavigateUri = new Uri("https://github.com/megabytesme/CardBox/blob/master/PRIVACYPOLICY.md"), Inlines = { new Run() { Text = "Privacy Policy" } } },
+                    new LineBreak(),
+                    new Run() { Text = "Like what you see? View my " },
+                    new Hyperlink() { NavigateUri = new Uri("https://github.com/megabytesme"), Inlines = { new Run() { Text = "GitHub" } } },
+                    new Run() { Text = " and maybe my " },
+                    new Hyperlink() { NavigateUri = new Uri("https://apps.microsoft.com/search?query=megabytesme"), Inlines = { new Run() { Text = "Other Apps" } } },
+                    new LineBreak(),
+                    new Run() { Text = " "},
+                    new LineBreak(),
+                    new Run() { Text = "CardBox is designed to help you manage your loyalty cards effortlessly." }
+                 },
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            ScrollViewer scrollableContent = new ScrollViewer()
+            {
+                Content = aboutContent
+            };
+
+            await DialogService.ShowContentDialogAsync(
+                context: this,
+                contentElement: scrollableContent,
+                title: "About CardBox Tool",
+                closeButtonText: "OK"
+            );
         }
     }
 }
