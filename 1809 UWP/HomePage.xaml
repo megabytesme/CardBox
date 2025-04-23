@@ -11,22 +11,22 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ScrollViewer Margin="8,8,8,0">
+        <ScrollViewer>
             <StackPanel>
-                <ItemsControl x:Name="CardsItemsControl" ItemsSource="{x:Bind FilteredCards}">
+                <ItemsControl x:Name="CardsItemsControl" ItemsSource="{x:Bind FilteredCards}" Margin="0,0,0,12">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="local1:Card">
-                            <Grid Margin="0,0,0,12">
+                            <Grid Margin="12,12,12,0">
                                 <Rectangle Fill="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                           RadiusX="8"
-                                           RadiusY="8"
-                                           Opacity="0.1"
-                                           Margin="0"/>
+                                        RadiusX="8"
+                                        RadiusY="8"
+                                        Opacity="0.1"
+                                        Margin="0"/>
                                 <Border Padding="16"
-                                        CornerRadius="8"
-                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                        BorderThickness="1">
+                                    CornerRadius="8"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
@@ -35,23 +35,23 @@
 
                                         <StackPanel Grid.Row="0" Margin="0,0,0,8" Spacing="4">
                                             <TextBlock Text="{x:Bind CardName}"
-                                                       TextAlignment="Center"
-                                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                                       FontWeight="SemiBold" />
+                                                    TextAlignment="Center"
+                                                    Style="{ThemeResource BaseTextBlockStyle}"
+                                                    FontWeight="SemiBold" />
 
                                             <TextBlock Text="{x:Bind CardNickname}"
-                                                       TextAlignment="Center"
-                                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Margin="0,2,0,0"/>
+                                                    TextAlignment="Center"
+                                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Margin="0,2,0,0"/>
                                         </StackPanel>
 
                                         <Button Content="View Card"
-                                                Click="ViewCard_Click"
-                                                CommandParameter="{Binding}"
-                                            HorizontalAlignment="Stretch"
-                                                Grid.Row="1"
-                                                CornerRadius="4"/>
+                                            Click="ViewCard_Click"
+                                            CommandParameter="{Binding}"
+                                        HorizontalAlignment="Stretch"
+                                            Grid.Row="1"
+                                            CornerRadius="4"/>
                                     </Grid>
                                 </Border>
                             </Grid>
@@ -59,16 +59,16 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <TextBlock x:Name="NoCardsTextBlock"
-                           Text="No cards available."
-                           Visibility="Collapsed"
-                           HorizontalAlignment="Center"
-                           Margin="12"/>
-                <Button x:Name="AddCardButton"
-                        Content="Add Card"
-                        Click="AddCardButton_Click"
+                        Text="No cards available."
                         Visibility="Collapsed"
                         HorizontalAlignment="Center"
                         Margin="12"/>
+                <Button x:Name="AddCardButton"
+                    Content="Add Card"
+                    Click="AddCardButton_Click"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Center"
+                    Margin="12"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>
