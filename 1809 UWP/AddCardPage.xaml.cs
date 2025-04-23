@@ -1,119 +1,44 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Shared_Code;
+﻿using Windows.UI.Xaml.Controls;
 using System;
 using ZXing;
-using Microsoft.UI.Xaml.Controls;
-using Windows.Foundation.Metadata;
-using Windows.UI;
-using Microsoft.UI.Xaml.Media;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Navigation;
+using Shared_Code_UWP.BasePages;
 
 namespace _1809_UWP
 {
-    public sealed partial class AddCardPage : Page
+    public sealed partial class AddCardPage : AddCardPageBase
     {
         public AddCardPage()
         {
             this.InitializeComponent();
-            var supportedTypes = Enum.GetValues(typeof(BarcodeFormat))
-                         .Cast<BarcodeFormat>()
-                         .Where(dt => BarcodeHelper.IsSupportedDisplayType(dt))
-                         .ToList();
-            displayPicker.ItemsSource = supportedTypes;
-            ApplyBackdropOrAcrylic();
+            MaterialHelper.ApplySystemBackdropOrAcrylic(this);
+            AddCardButton.Click += base.AddCardButton_Click;
+            ScanCardButton.Click += base.ScanCardButton_Click;
+            InitializeBarcodeFormatPicker();
         }
 
-        private void ApplyBackdropOrAcrylic()
+        protected override TextBox CardNameEntry => cardNameEntry;
+        protected override TextBox CardNicknameEntry => cardNicknameEntry;
+        protected override TextBox CardNumberEntry => cardNumberEntry;
+        protected override ComboBox DisplayPicker => displayPicker;
+        protected override Type GetScannerPageType() => typeof(ScannerPage);
+
+        protected override IScannerResult GetLastScanResult()
         {
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
-            {
-            muxc: BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
-            }
-            else
-            {
-                this.Background = new AcrylicBrush
-                {
-                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
-                    TintColor = Colors.Transparent,
-                    TintOpacity = 0.6,
-                    FallbackColor = Colors.Gray
-                };
-            }
+            var result = ScannerPage.LastScanResult;
+            return result == null ? null : new ScannerResultAdapter(result);
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void ClearLastScanResult()
         {
-            base.OnNavigatedTo(e);
-
-            if (e.NavigationMode == NavigationMode.Back)
-            {
-                ScannerPage.ScannerResult result = ScannerPage.LastScanResult;
-
-                if (result != null)
-                {
-                    cardNumberEntry.Text = result.Text;
-                    if (result.Format != default(BarcodeFormat))
-                    {
-                        displayPicker.SelectedItem = result.Format;
-                    }
-                    else
-                    {
-                        await ShowErrorDialog("Unrecognized barcode format.");
-                    }
-                    ScannerPage.LastScanResult = null;
-                }
-            }
+            ScannerPage.LastScanResult = null;
         }
 
-        private async void OnAddCard(object sender, RoutedEventArgs e)
+        private class ScannerResultAdapter : IScannerResult
         {
-            string cardName = cardNameEntry.Text;
-            string cardNickname = cardNicknameEntry.Text;
-            string cardNumberText = cardNumberEntry.Text;
-            var selectedDisplayType = (BarcodeFormat)displayPicker.SelectedItem;
-
-            if (string.IsNullOrWhiteSpace(cardName) || string.IsNullOrWhiteSpace(cardNumberText) || selectedDisplayType == default)
-            {
-                await ShowErrorDialog("Please fill all required fields.");
-                return;
-            }
-
-            if (!BarcodeHelper.ValidateBarcode(cardNumberText, selectedDisplayType, out string errorMessage))
-            {
-                await ShowErrorDialog($"Invalid display type: {errorMessage}");
-                return;
-            }
-
-            var newCard = new Card
-            {
-                CardName = cardName,
-                CardNickname = cardNickname,
-                CardNumber = cardNumberText,
-                DisplayType = selectedDisplayType
-            };
-
-            CardRepository.Instance.AddCard(newCard);
-
-            Frame.GoBack();
-        }
-
-        private void OnScanCard(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(ScannerPage));
-        }
-
-        private async Task ShowErrorDialog(string message)
-        {
-            var dialog = new ContentDialog
-            {
-                Title = "Error",
-                Content = message,
-                CloseButtonText = "OK"
-            };
-            await dialog.ShowAsync();
+            private readonly ScannerPage.ScannerResult _adaptee;
+            public ScannerResultAdapter(ScannerPage.ScannerResult adaptee) { _adaptee = adaptee; }
+            public string Text => _adaptee?.Text;
+            public BarcodeFormat Format => _adaptee != null ? _adaptee.Format : default;
         }
     }
 }

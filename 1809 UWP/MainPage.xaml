@@ -3,17 +3,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:_1809_UWP"
-    xmlns:local1="using:Shared_Code"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" d:DesignHeight="507.41" d:DesignWidth="1421.863">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="WindowSizeStates">
-
                 <VisualState x:Name="MediumLayout">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="641" />
@@ -39,41 +37,41 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid x:Name="AppTitleBar" Background="Transparent" Height="32">
+        <Grid x:Name="AppTitleBar"
+              Grid.Row="0"
+              Background="Transparent"
+              Height="48"
+              VerticalAlignment="Top"
+              IsHitTestVisible="True">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Image  Source="ms-appx:///Assets/Square44x44Logo.png"
-                    Width="24"
-                    Height="24"
-                    VerticalAlignment="Center"
-                    Margin="16,0,0,0"
-                    ToolTipService.ToolTip="System Window Menu" 
-                    Grid.Column="0" />
-
-            <TextBlock
-                        Text="CardBox"
-                        FontSize="16"
-                        FontFamily="Segoe UI Variable, Segoe UI"
-                        VerticalAlignment="Center"
-                        Margin="0,0,16,0"
-                        TextTrimming="CharacterEllipsis"
-                        Grid.Column="2" />
-        </Grid>
-
-        <AutoSuggestBox x:Name="SearchBox"
-                QueryIcon="Find"
-                PlaceholderText="Search cards..."
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
+            <Image Source="ms-appx:///Assets/Square44x44Logo.png"
+                   Width="24" Height="24"
+                   VerticalAlignment="Center"
+                   Margin="16,0,0,0"
+                   ToolTipService.ToolTip="System Window Menu"
+                   Grid.Column="0" />
+            <TextBlock Text="CardBox"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left"
+                       Margin="16,0,0,0"
+                       Grid.Column="1" />
+            <AutoSuggestBox x:Name="SearchBox"
+                            QueryIcon="Find"
+                            PlaceholderText="Search cards..."
+                            TextChanged="SearchBox_TextChanged"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                Width="180"
                 MinWidth="80"
-                MaxWidth="200"
-                Height="32"
-                TextChanged="SearchBox_TextChanged"
-                Margin="10,0,10,0"/>
+                            Height="32"
+                            Grid.Column="1" />
+        </Grid>
 
         <muxc:NavigationView
             x:Name="NavView"
@@ -101,7 +99,9 @@
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
             </muxc:NavigationView.MenuItems>
+
             <Frame x:Name="ContentFrame" Padding="0" Margin="0"/>
+
         </muxc:NavigationView>
     </Grid>
 </Page>

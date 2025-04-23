@@ -130,6 +130,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MaterialHelper.cs" />
     <Compile Include="CardDetailPage.xaml.cs">
       <DependentUpon>CardDetailPage.xaml</DependentUpon>
     </Compile>

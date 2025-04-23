@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Navigation;
 using ZXing;
 using Windows.UI.Core;
+
 namespace _1703_UWP
 {
     public sealed partial class ScannerPage : Page
@@ -21,14 +22,14 @@ namespace _1703_UWP
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            scannerControl.StopScanning();
+            scannerControl?.StopScanning();
             base.OnNavigatingFrom(e);
         }
 
-
-        private async void StartScanning()
+        private void StartScanning()
         {
-            scannerControl.StartScanning(result => {
+            scannerControl?.StartScanning(result =>
+            {
                 if (result != null)
                 {
                     LastScanResult = new ScannerResult { Text = result.Text, Format = result.BarcodeFormat };
@@ -38,9 +39,12 @@ namespace _1703_UWP
                     LastScanResult = null;
                 }
 
-                Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    Frame.GoBack();
+                    if (Frame != null && Frame.CanGoBack)
+                    {
+                        Frame.GoBack();
+                    }
                 });
             });
         }

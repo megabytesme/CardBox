@@ -1,4 +1,4 @@
-﻿<Page
+﻿<base:AddCardPageBase
     x:Class="_1703_UWP.AddCardPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,6 +6,7 @@
     xmlns:local1="using:Shared_Code"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:base="using:Shared_Code_UWP.BasePages"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -15,21 +16,18 @@
                 <StackPanel x:Name="cardInputStackPanel">
                     <TextBlock Text="Name of Card:" Margin="0,0,0,5" />
                     <TextBox x:Name="cardNameEntry" PlaceholderText="Enter name of card (required)" Margin="0,0,0,15"/>
-
                     <TextBlock Text="Nickname of Card:" Margin="0,0,0,5" />
                     <TextBox x:Name="cardNicknameEntry" PlaceholderText="Enter nickname of card (optional)" Margin="0,0,0,15"/>
-
                     <TextBlock Text="Card Number:" Margin="0,0,0,5" />
                     <TextBox x:Name="cardNumberEntry" PlaceholderText="Enter card number (required)" Margin="0,0,0,15"/>
-
                     <TextBlock Text="Card Display Type:" Margin="0,0,0,5" />
                     <ComboBox x:Name="displayPicker" Margin="0,0,0,15"/>
                 </StackPanel>
             </Border>
         </ScrollViewer>
         <StackPanel x:Name="buttonStackPanel" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10">
-            <Button Content="Scan Card" Click="OnScanCard" Margin="0,0,10,0"/>
-            <Button Content="Add Card" Click="OnAddCard" />
+            <Button x:Name="ScanCardButton" Content="Scan Card" Margin="0,0,10,0"/>
+            <Button x:Name="AddCardButton" Content="Add Card" />
         </StackPanel>
     </Grid>
-</Page>
+</base:AddCardPageBase>

@@ -9,6 +9,11 @@
     <Import_RootNamespace>Shared_Code__UWP_</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BarcodeUIService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BasePages\AddCardPageBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BasePages\CardDetailPageBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BasePages\EditCardPageBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BasePages\SettingsPageBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DialogService.cs" />
   </ItemGroup>
 </Project>

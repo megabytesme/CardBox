@@ -3,33 +3,36 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Shared_Code;
-using Windows.Foundation.Metadata;
-using Windows.UI;
-using Windows.UI.Xaml.Media;
 using System.Linq;
+using System.ComponentModel;
 
 namespace _1703_UWP
 {
-    public sealed partial class HomePage : Page
+    public sealed partial class HomePage : Page, INotifyPropertyChanged
     {
-        public ObservableCollection<Card> Cards => CardRepository.Instance.Cards;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        private ObservableCollection<Card> filteredCards;
+        public ObservableCollection<Card> AllCards => CardRepository.Instance.Cards;
+
+        private ObservableCollection<Card> _filteredCards;
         public ObservableCollection<Card> FilteredCards
         {
-            get => filteredCards ?? Cards;
+            get => _filteredCards ?? AllCards;
             set
             {
-                filteredCards = value;
-                Bindings.Update();
-                UpdateNoCardsUI();
+                if (!ReferenceEquals(_filteredCards, value))
+                {
+                    _filteredCards = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilteredCards)));
+                    UpdateNoCardsUI();
+                }
             }
         }
 
         public HomePage()
         {
             this.InitializeComponent();
-            DataContext = this;
+            FilteredCards = new ObservableCollection<Card>(AllCards);
             UpdateNoCardsUI();
         }
 
@@ -37,7 +40,7 @@ namespace _1703_UWP
         {
             if (sender is Button button && button.CommandParameter is Card selectedCard)
             {
-                Frame.Navigate(typeof(CardDetailPage), selectedCard);
+                this.Frame?.Navigate(typeof(CardDetailPage), selectedCard);
             }
         }
 
@@ -46,34 +49,38 @@ namespace _1703_UWP
             bool noCards = FilteredCards == null || !FilteredCards.Any();
             NoCardsTextBlock.Visibility = noCards ? Visibility.Visible : Visibility.Collapsed;
             AddCardButton.Visibility = noCards ? Visibility.Visible : Visibility.Collapsed;
+            CardsItemsControl.Visibility = !noCards ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void AddCardButton_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(AddCardPage));
+            this.Frame?.Navigate(typeof(AddCardPage));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is ObservableCollection<Card> filteredCards)
+            if (e.Parameter is ObservableCollection<Card> filteredResult)
             {
-                FilteredCards = filteredCards;
+                FilteredCards = filteredResult;
             }
-            UpdateNoCardsUI();
+            else if (FilteredCards == null || e.NavigationMode != NavigationMode.Back)
+            {
+                FilteredCards = new ObservableCollection<Card>(AllCards);
+            }
         }
 
         private void NavigationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is AppBarButton button)
+            if (sender is AppBarButton button && button.Tag is string tag)
             {
-                switch (button.Tag?.ToString())
+                switch (tag)
                 {
                     case "AddCardPage":
-                        Frame.Navigate(typeof(AddCardPage));
+                        this.Frame?.Navigate(typeof(AddCardPage));
                         break;
                     case "SettingsPage":
-                        Frame.Navigate(typeof(SettingsPage));
+                        this.Frame?.Navigate(typeof(SettingsPage));
                         break;
                 }
             }

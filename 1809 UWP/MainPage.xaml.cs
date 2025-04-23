@@ -1,21 +1,22 @@
 ﻿using System.Collections.ObjectModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Shared_Code;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using muxc = Microsoft.UI.Xaml.Controls;
-using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using System.Linq;
 using System;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Media.Animation;
+using System.ComponentModel;
 
 namespace _1809_UWP
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public ObservableCollection<Card> Cards => CardRepository.Instance.Cards;
         private ObservableCollection<Card> filteredCards = new ObservableCollection<Card>();
 
@@ -26,11 +27,12 @@ namespace _1809_UWP
             this.InitializeComponent();
             this.DataContext = this;
 
-            ApplyBackdropOrAcrylic();
+            MaterialHelper.ApplySystemBackdropOrAcrylic(this);
             SetupTitleBar();
 
             Loaded += MainPage_Loaded;
             ContentFrame.Navigated += ContentFrame_Navigated;
+            ContentFrame.Navigated += (s, e) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ContentFrame.CanGoBack)));
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -42,37 +44,14 @@ namespace _1809_UWP
             {
                 NavView.SelectedItem = homeItem;
             }
+            SearchBox.Visibility = (ContentFrame.CurrentSourcePageType == typeof(HomePage)) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void SetupTitleBar()
         {
-            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.ExtendViewIntoTitleBar = true;
-
             var appViewTitleBar = ApplicationView.GetForCurrentView().TitleBar;
             appViewTitleBar.ButtonBackgroundColor = Colors.Transparent;
             appViewTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            appViewTitleBar.ButtonPressedBackgroundColor = Colors.Transparent;
-
-            Window.Current.SetTitleBar(AppTitleBar);
-        }
-
-        private void ApplyBackdropOrAcrylic()
-        {
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12))
-            {
-                muxc.BackdropMaterial.SetApplyToRootOrPageBackground(this, true);
-            }
-            else
-            {
-                this.Background = new AcrylicBrush
-                {
-                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
-                    TintColor = Colors.Transparent,
-                    TintOpacity = 0.6,
-                    FallbackColor = Colors.Gray
-                };
-            }
         }
 
         private void NavView_ItemInvoked(muxc.NavigationView sender, muxc.NavigationViewItemInvokedEventArgs args)
@@ -107,16 +86,25 @@ namespace _1809_UWP
             }
             else
             {
-                var tagToSelect = e.SourcePageType.Name;
-                NavView.SelectedItem = NavView.MenuItems
-                                            .OfType<muxc.NavigationViewItem>()
-                                            .FirstOrDefault(item => item.Tag?.ToString() == tagToSelect);
+                var tagToSelect = e.SourcePageType?.Name;
+                if (tagToSelect != null)
+                {
+                    NavView.SelectedItem = NavView.MenuItems
+                                                .OfType<muxc.NavigationViewItem>()
+                                                .FirstOrDefault(item => item.Tag?.ToString() == tagToSelect);
+                }
+                else
+                {
+                    NavView.SelectedItem = null;
+                }
             }
 
             SearchBox.Visibility = (e.SourcePageType == typeof(HomePage)) ? Visibility.Visible : Visibility.Collapsed;
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ContentFrame.CanGoBack)));
         }
 
-        private void NavView_Navigate(string navItemTag, Windows.UI.Xaml.Media.Animation.NavigationTransitionInfo transitionInfo)
+        private void NavView_Navigate(string navItemTag, NavigationTransitionInfo transitionInfo)
         {
             Type pageType = null;
             switch (navItemTag)
@@ -134,7 +122,12 @@ namespace _1809_UWP
 
             if (pageType != null && ContentFrame.CurrentSourcePageType != pageType)
             {
-                ContentFrame.Navigate(pageType, null, transitionInfo);
+                object parameter = (pageType == typeof(HomePage)) ? new ObservableCollection<Card>(this.Cards) : null;
+                ContentFrame.Navigate(pageType, parameter, transitionInfo);
+            }
+            else if (pageType == typeof(HomePage) && ContentFrame.CurrentSourcePageType == typeof(HomePage))
+            {
+                ContentFrame.Navigate(pageType, new ObservableCollection<Card>(this.Cards), new SuppressNavigationTransitionInfo());
             }
         }
 
@@ -152,10 +145,10 @@ namespace _1809_UWP
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                var query = sender.Text.ToLower();
-                var filteredList = Cards.Where(card => card.CardName.ToLower().Contains(query) ||
-                                                       card.CardNickname.ToLower().Contains(query)).ToList();
+                var query = sender.Text?.ToLowerInvariant() ?? "";
 
+                var filteredList = Cards.Where(card => (card.CardName?.ToLowerInvariant() ?? "").Contains(query) ||
+                                                       (card.CardNickname?.ToLowerInvariant() ?? "").Contains(query)).ToList();
                 filteredCards.Clear();
                 foreach (var card in filteredList)
                 {
@@ -164,6 +157,14 @@ namespace _1809_UWP
 
                 if (ContentFrame.Content is HomePage homePage)
                 {
+                    homePage.FilteredCards = filteredCards;
+                }
+            }
+            else if (string.IsNullOrEmpty(sender.Text) && (args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange || args.Reason == AutoSuggestionBoxTextChangeReason.SuggestionChosen))
+            {
+                if (ContentFrame.Content is HomePage homePage)
+                {
+                    filteredCards = new ObservableCollection<Card>(this.Cards);
                     homePage.FilteredCards = filteredCards;
                 }
             }

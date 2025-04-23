@@ -1,13 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Shared_Code;
-using Windows.UI;
 using Windows.UI.Core;
-using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
 using System.Linq;
+using System;
+using Windows.UI.Xaml.Navigation;
 
 namespace _1703_UWP
 {
@@ -15,59 +13,53 @@ namespace _1703_UWP
     {
         public ObservableCollection<Card> Cards => CardRepository.Instance.Cards;
 
-        private ObservableCollection<Card> filteredCards = new ObservableCollection<Card>();
+        private ObservableCollection<Card> filteredCards;
 
         public MainPage()
         {
             this.InitializeComponent();
-            DataContext = this;
 
+            filteredCards = new ObservableCollection<Card>(this.Cards);
             Loaded += MainPage_Loaded;
             ContentFrame.Navigated += ContentFrame_Navigated;
-
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
-
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(typeof(HomePage));
+            if (ContentFrame.Content == null)
+            {
+                ContentFrame.Navigate(typeof(HomePage), filteredCards);
+            }
+            UpdateBackButtonVisibility();
         }
-
 
         private void NavigationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is AppBarButton button)
+            if (sender is AppBarButton button && button.Tag is string tag)
             {
-                switch (button.Tag?.ToString())
+                switch (tag)
                 {
                     case "HomePage":
-                        ContentFrame.Navigate(typeof(HomePage));
+                        if (ContentFrame.CurrentSourcePageType != typeof(HomePage))
+                        {
+                            ContentFrame.Navigate(typeof(HomePage), new ObservableCollection<Card>(this.Cards));
+                        }
                         break;
                 }
             }
         }
 
-
-        private void ContentFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            var backButton = (Button)FindName("BackButton");
-            if (backButton != null)
-            {
-                backButton.Visibility = ContentFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
-            }
+            UpdateBackButtonVisibility();
 
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = ContentFrame.CanGoBack ?
-                AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+            bool isHomePage = e.SourcePageType == typeof(HomePage);
+            SearchBox.Visibility = isHomePage ? Visibility.Visible : Visibility.Collapsed;
 
-            if (e.SourcePageType == typeof(HomePage))
+            if (!isHomePage)
             {
-                SearchBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                SearchBox.Visibility = Visibility.Collapsed;
+                SearchBox.Text = string.Empty;
             }
         }
 
@@ -88,25 +80,49 @@ namespace _1703_UWP
             }
         }
 
+        private void UpdateBackButtonVisibility()
+        {
+            try
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                   ContentFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error setting back button visibility: {ex.Message}");
+            }
+        }
+
         public Frame MainContentFrame => ContentFrame;
 
         private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput || args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
             {
-                var query = sender.Text.ToLower();
-                var filteredList = Cards.Where(card => card.CardName.ToLower().Contains(query) ||
-                                                        card.CardNickname.ToLower().Contains(query)).ToList();
+                string query = sender.Text?.ToLowerInvariant() ?? "";
+
+                var filteredListSource = Cards.Where(card =>
+                                                    (card.CardName?.ToLowerInvariant() ?? "").Contains(query) ||
+                                                    (card.CardNickname?.ToLowerInvariant() ?? "").Contains(query))
+                                               .ToList();
 
                 filteredCards.Clear();
-                foreach (var card in filteredList)
+                foreach (var card in filteredListSource)
                 {
                     filteredCards.Add(card);
                 }
 
-                if (ContentFrame.Content is HomePage homePage)
+                if (ContentFrame.Content is HomePage currentPage && ContentFrame.CurrentSourcePageType == typeof(HomePage))
                 {
-                    homePage.FilteredCards = filteredCards;
+                    currentPage.FilteredCards = filteredCards;
+                }
+                else if (ContentFrame.CurrentSourcePageType != typeof(HomePage) && !string.IsNullOrEmpty(query))
+                {
+                    ContentFrame.Navigate(typeof(HomePage), filteredCards);
+                }
+                else if (string.IsNullOrEmpty(query) && ContentFrame.CurrentSourcePageType != typeof(HomePage))
+                {
+                    ContentFrame.Navigate(typeof(HomePage), new ObservableCollection<Card>(this.Cards));
                 }
             }
         }
