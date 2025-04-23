@@ -30,6 +30,7 @@ namespace _1809_UWP
             SetupTitleBar();
 
             Loaded += MainPage_Loaded;
+            ContentFrame.Navigated += ContentFrame_Navigated;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
