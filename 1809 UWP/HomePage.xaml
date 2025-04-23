@@ -10,9 +10,9 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="8">
-        <ScrollViewer Margin="8">
-            <StackPanel Spacing="12">
+    <Grid>
+        <ScrollViewer Margin="8,8,8,0">
+            <StackPanel>
                 <ItemsControl x:Name="CardsItemsControl" ItemsSource="{x:Bind FilteredCards}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="local1:Card">
